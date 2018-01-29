@@ -1,4 +1,4 @@
-package com.wzes.tspider.module;
+package com.wzes.tspider.module.spider;
 
 import java.util.List;
 

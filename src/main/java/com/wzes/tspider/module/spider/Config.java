@@ -1,4 +1,4 @@
-package com.wzes.tspider.module;
+package com.wzes.tspider.module.spider;
 
 import java.util.List;
 
@@ -19,4 +19,8 @@ public class Config {
      * 代理集合
      */
     private List<String> proxies;
+    /**
+     * 设置 timeout
+     */
+    private int timeout;
 }
