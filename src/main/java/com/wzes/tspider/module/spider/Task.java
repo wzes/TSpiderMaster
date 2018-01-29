@@ -25,6 +25,22 @@ public class Task {
      */
     private PageType pageType;
 
+    public List<String> getUrls() {
+        return urls;
+    }
+
+    public List<ExtractRule> getExtractRules() {
+        return extractRules;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public PageType getPageType() {
+        return pageType;
+    }
+
     private Task() {
 
     }
