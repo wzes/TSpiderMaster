@@ -108,6 +108,7 @@ public class Task {
             task.config = config;
             return this;
         }
+
         /**
          * build 模式 , 创建 Task 对象
          * @return Task
@@ -115,7 +116,5 @@ public class Task {
         public Task build() {
             return new Task(task);
         }
-
     }
-
 }

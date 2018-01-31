@@ -1,6 +1,7 @@
 package com.wzes.tspider.service.spider;
 
 import com.wzes.tspider.module.spider.Task;
+import com.wzes.tspider.service.store.PipLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,15 @@ import java.util.List;
  * @date on 1/29/18
  */
 public class TSpiderProcessor {
+    /**
+     * 任务集合
+     */
     private List<Task> tasks;
+
+    /**
+     * 存储类
+     */
+    private PipLine pipLine;
 
 
     /**
@@ -35,6 +44,17 @@ public class TSpiderProcessor {
         this.tasks = tasks;
         return this;
     }
+
+    /**
+     * 配置存储
+     * @param pipLine pipLine
+     * @return TSpiderProcessor
+     */
+    private TSpiderProcessor pipline(PipLine pipLine) {
+        this.pipLine = pipLine;
+        return this;
+    }
+
 
     /**
      * 启动爬虫
