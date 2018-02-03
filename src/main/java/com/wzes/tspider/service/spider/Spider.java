@@ -95,7 +95,7 @@ public class Spider {
         for (HtmlPage htmlPage : pages) {
             getValueFromPage(htmlPage, extractType, xpaths, values);
         }
-
+        item.setSize(xpaths.size());
         item.setName(name);
         item.setExtractType(extractType);
         item.setValues(values);
@@ -114,6 +114,7 @@ public class Spider {
         String name = extractItem.getName();
         List<String> values = new ArrayList<>();
         getValueFromPage(page, extractType, xpaths, values);
+        item.setSize(values.size());
         item.setName(name);
         item.setExtractType(extractType);
         item.setValues(values);
@@ -129,36 +130,45 @@ public class Spider {
      * @param values
      */
     private static void getValueFromPage(HtmlPage page, ExtractType extractType, List<String> xpaths, List<String> values) {
-        for (int index = 0; index < xpaths.size(); index++) {
-            List<Object> byXPath = page.getByXPath(xpaths.get(index));
-            if (byXPath.size() > 0) {
-                Object o = byXPath.get(0);
-                switch (extractType) {
-                    case EXTRACT_TEXT:
-                        if( o instanceof HtmlTableDataCell) {
-                            values.add(((HtmlTableDataCell) o).getTextContent().trim());
-                        }else if( o instanceof HtmlAnchor) {
-                            values.add(((HtmlAnchor) o).getTextContent().trim());
-                        }else if( o instanceof HtmlArticle) {
-                            values.add(((HtmlArticle) o).getTextContent().trim());
-                        }else if( o instanceof HtmlLink) {
-                            values.add(((HtmlLink) o).getTextContent().trim());
-                        }else if( o instanceof HtmlSpan) {
-                            values.add(((HtmlSpan) o).getTextContent().trim());
-                        }
-                        break;
-                    case EXTRACT_LINK:
-                        values.add(getAbsUrl(((HtmlAnchor) o).getBaseURI(),
-                                ((HtmlAnchor) o).getHrefAttribute()));
-                        break;
+        for (String xpath : xpaths) {
+            try {
+                List<Object> byXPath = page.getByXPath(xpath);
+                if (byXPath.size() > 0) {
+                    Object o = byXPath.get(0);
+                    switch (extractType) {
+                        case EXTRACT_TEXT:
+                            if (o instanceof HtmlTableDataCell) {
+                                values.add(((HtmlTableDataCell) o).getTextContent().trim());
+                            } else if (o instanceof HtmlAnchor) {
+                                values.add(((HtmlAnchor) o).getTextContent().trim());
+                            } else if (o instanceof HtmlArticle) {
+                                values.add(((HtmlArticle) o).getTextContent().trim());
+                            } else if (o instanceof HtmlLink) {
+                                values.add(((HtmlLink) o).getTextContent().trim());
+                            } else if (o instanceof HtmlSpan) {
+                                values.add(((HtmlSpan) o).getTextContent().trim());
+                            } else {
+                                values.add("-");
+                            }
+                            break;
+                        case EXTRACT_LINK:
+                            values.add(getAbsUrl(((HtmlAnchor) o).getBaseURI(),
+                                    ((HtmlAnchor) o).getHrefAttribute()));
+                            break;
 
-                    case EXTRACT_IMAGE:
-                        values.add(getAbsUrl(((HtmlImage) o).getBaseURI(),
-                                ((HtmlImage) o).getSrcAttribute()));
-                        break;
-                    default:
-                        break;
+                        case EXTRACT_IMAGE:
+                            values.add(getAbsUrl(((HtmlImage) o).getBaseURI(),
+                                    ((HtmlImage) o).getSrcAttribute()));
+                            break;
+                        default:
+                            values.add("-");
+                            break;
+                    }
+                } else {
+                    values.add("-");
                 }
+            } catch (Exception e) {
+                values.add("-");
             }
         }
     }
