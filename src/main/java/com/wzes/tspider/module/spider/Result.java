@@ -10,7 +10,8 @@ import java.util.List;
  * 一个 ExtractRule 对应一个 Result
  */
 public class Result {
-    private static final String SPLIT_WORD = " ";
+    private static final String SPLIT_ITEM = " ";
+    private static final String SPLIT_LINE = "\n";
     /**
      * 结果
      */
@@ -52,6 +53,10 @@ public class Result {
      */
     public class Item {
         /**
+         * 字段长度
+         */
+        int size;
+        /**
          * 字段名
          */
         private String name;
@@ -64,6 +69,14 @@ public class Result {
          * 存储类型
          */
         private ExtractType extractType;
+
+        public int getSize() {
+            return size;
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
 
         public String getName() {
             return name;
@@ -102,27 +115,28 @@ public class Result {
      * 表格显示结果
      */
     public void show() {
-        int[] size = new int[items.size()];
+        int size = items.size();
         String[] names = new String[items.size()];
         int max = 0;
-        for (int index = 0; index < size.length; index++) {
-            size[index] = items.get(0).getValues().size();
+        // 初始化
+        for (int index = 0; index < size; index++) {
             names[index] = items.get(index).getName();
-            if (max < size[index]) {
-                max = size[index];
+            if (max < items.get(index).getValues().size()) {
+                max = items.get(index).getValues().size();
             }
         }
-        for (int index = 0; index < size.length; index++ ) {
-            System.out.print(names[index] + SPLIT_WORD);
+        // 输出标题
+        for (int index = 0; index < size; index++ ) {
+            System.out.print(names[index] + SPLIT_ITEM);
         }
-        System.out.print("\n");
+        // 换行
+        System.out.print(SPLIT_LINE);
+        // 输出行
         for (int index = 0; index < max; index++ ) {
-            for (int j = 0; j < size.length; j++ ) {
-                if (index < size[j]) {
-                    System.out.print(items.get(j).getValues().get(index) + SPLIT_WORD);
-                }
+            for (Item item : items) {
+                System.out.print(item.getValues().get(index) + SPLIT_ITEM);
             }
-            System.out.print("\n");
+            System.out.print(SPLIT_LINE);
         }
     }
 }
