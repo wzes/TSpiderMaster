@@ -1,14 +1,12 @@
 package com.wzes.tspider.service.spider;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.*;
 import com.wzes.tspider.module.spider.*;
+import com.wzes.tspider.service.listener.OnCrawlListener;
 import com.wzes.tspider.service.store.PipeLine;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
  */
 public class TSpiderProcessor {
 
-    private Logger logger = Logger.getLogger(TSpiderProcessor.class);
+    private static Logger logger = Logger.getLogger(TSpiderProcessor.class);
 
     /**
      * 任务集合
@@ -48,7 +46,7 @@ public class TSpiderProcessor {
          * @param task task
          * @return TSpiderProcessor
          */
-        private Builder task(Task task) {
+        public Builder task(Task task) {
             if (tSpiderProcessor.tasks == null) {
                 tSpiderProcessor.tasks = new ArrayList<>();
             }
@@ -61,7 +59,7 @@ public class TSpiderProcessor {
          * @param tasks tasks
          * @return Builder
          */
-        private Builder tasks(List<Task> tasks) {
+        public Builder tasks(List<Task> tasks) {
             tSpiderProcessor.tasks = tasks;
             return this;
         }
@@ -71,7 +69,7 @@ public class TSpiderProcessor {
          * @param pipeLine pipeLine
          * @return Builder
          */
-        private Builder pipeline(PipeLine pipeLine) {
+        public Builder pipeline(PipeLine pipeLine) {
             tSpiderProcessor.pipeLine = pipeLine;
             return this;
         }
@@ -108,8 +106,5 @@ public class TSpiderProcessor {
                 }
             }
         }
-
     }
-
-
 }

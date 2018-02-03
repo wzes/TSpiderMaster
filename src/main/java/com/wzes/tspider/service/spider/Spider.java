@@ -53,8 +53,18 @@ public class Spider {
             if (config.getTimeout() != 0) {
                 webClient.getOptions().setTimeout(config.getTimeout());
             }
+            //
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            webClient.getOptions().setJavaScriptEnabled(false);
             return webClient;
         }
+        //
+        webClient = new WebClient(BrowserVersion.CHROME);
+        webClient.getOptions().setTimeout(5000);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
         return new WebClient();
     }
 
@@ -159,7 +169,9 @@ public class Spider {
                         page = webClient.getPage(url);
                     } catch (IOException e) {
                         // 异常
-                        extractRule.getOnCrawlListener().onError(e.getCause());
+                        if (extractRule.getOnCrawlListener() != null) {
+                            extractRule.getOnCrawlListener().onError(e.getCause());
+                        }
                     }
                 }
                 //
@@ -169,7 +181,14 @@ public class Spider {
                     result.addItem(item);
                 }
                 // 爬取内容
-                extractRule.getOnCrawlListener().onNext(result);
+                if (extractRule.getOnCrawlListener() != null) {
+                    extractRule.getOnCrawlListener().onNext(result);
+                }
+                //
+                if (extractRule.getOnCrawlListener() != null) {
+                    extractRule.getOnCrawlListener().onComplete();
+                }
+
             }
 
         }
