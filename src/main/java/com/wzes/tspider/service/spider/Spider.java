@@ -80,7 +80,27 @@ public class Spider {
         return getCommonSpider(task.getConfig());
     }
 
+    /**
+     *
+     * @param page
+     * @param extractItem
+     * @return
+     */
+    public static Result.Item getContent(List<HtmlPage> pages, ExtractItem extractItem) {
+        Result.Item item = new Result().new Item();
+        ExtractType extractType = extractItem.getExtractType();
+        List<String> xpaths = extractItem.getXpaths();
+        String name = extractItem.getName();
+        List<String> values = new ArrayList<>();
+        for (HtmlPage htmlPage : pages) {
+            getValueFromPage(htmlPage, extractType, xpaths, values);
+        }
 
+        item.setName(name);
+        item.setExtractType(extractType);
+        item.setValues(values);
+        return item;
+    }
     /**
      *
      * @param page
@@ -93,6 +113,22 @@ public class Spider {
         List<String> xpaths = extractItem.getXpaths();
         String name = extractItem.getName();
         List<String> values = new ArrayList<>();
+        getValueFromPage(page, extractType, xpaths, values);
+        item.setName(name);
+        item.setExtractType(extractType);
+        item.setValues(values);
+        return item;
+    }
+
+
+    /**
+     *
+     * @param page
+     * @param extractType
+     * @param xpaths
+     * @param values
+     */
+    private static void getValueFromPage(HtmlPage page, ExtractType extractType, List<String> xpaths, List<String> values) {
         for (int index = 0; index < xpaths.size(); index++) {
             List<Object> byXPath = page.getByXPath(xpaths.get(index));
             if (byXPath.size() > 0) {
@@ -125,10 +161,6 @@ public class Spider {
                 }
             }
         }
-        item.setName(name);
-        item.setExtractType(extractType);
-        item.setValues(values);
-        return item;
     }
 
 
@@ -156,41 +188,46 @@ public class Spider {
      */
     public static void commonCrawl(Task task) {
         //
-        for (String url : task.getUrls()) {
-            List<ExtractRule> extractRules = task.getExtractRules();
-            WebClient webClient = Spider.getCommonSpider(task.getConfig());
-            HtmlPage page = null;
+        List<ExtractRule> extractRules = task.getExtractRules();
+        WebClient webClient = Spider.getCommonSpider(task.getConfig());
+        List<HtmlPage> pages = null;
+        //
+        for (ExtractRule extractRule : extractRules) {
             //
-            for (ExtractRule extractRule : extractRules) {
-                //
-                Result result = new Result();
-                if (page == null) {
-                    try {
-                        page = webClient.getPage(url);
-                    } catch (IOException e) {
-                        // 异常
-                        if (extractRule.getOnCrawlListener() != null) {
-                            extractRule.getOnCrawlListener().onError(e.getCause());
-                        }
+            Result result = new Result();
+            //
+            if (pages == null) {
+                pages = new ArrayList<>();
+                try {
+                    for (String url : task.getUrls()) {
+                        pages.add(webClient.getPage(url));
+                    }
+                } catch (IOException e) {
+                    // 异常
+                    if (extractRule.getOnCrawlListener() != null) {
+                        extractRule.getOnCrawlListener().onError(e.getCause());
                     }
                 }
-                //
-                for (ExtractItem extractItem : extractRule.getExtractItems()) {
-                    // 爬取内容
-                    Result.Item item = Spider.getContent(page, extractItem);
-                    result.addItem(item);
-                }
-                // 爬取内容
-                if (extractRule.getOnCrawlListener() != null) {
-                    extractRule.getOnCrawlListener().onNext(result);
-                }
-                //
-                if (extractRule.getOnCrawlListener() != null) {
-                    extractRule.getOnCrawlListener().onComplete();
-                }
-
             }
-
+            //
+            if (pages.size() == 0) {
+                extractRule.getOnCrawlListener().onError(new NullPointerException());
+                return;
+            }
+            //
+            for (ExtractItem extractItem : extractRule.getExtractItems()) {
+                // 爬取内容
+                Result.Item item = Spider.getContent(pages, extractItem);
+                result.addItem(item);
+            }
+            // 爬取内容
+            if (extractRule.getOnCrawlListener() != null) {
+                extractRule.getOnCrawlListener().onNext(result);
+            }
+            //
+            if (extractRule.getOnCrawlListener() != null) {
+                extractRule.getOnCrawlListener().onComplete();
+            }
         }
     }
 }
