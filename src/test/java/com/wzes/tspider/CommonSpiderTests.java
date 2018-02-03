@@ -16,8 +16,8 @@ public class CommonSpiderTests {
     @Test
     public void SseTest() {
         Task.Builder builder = new Task.Builder();
-
-        // item
+        // --------------------------------------------------------------------//
+        // item title
         ExtractItem item = new ExtractItem();
         item.setName("title");
         item.setExtractType(ExtractType.EXTRACT_TEXT);
@@ -31,15 +31,31 @@ public class CommonSpiderTests {
         xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/a");
         xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/a");
         item.setXpaths(xpaths);
-
+        // item title link
         ExtractItem itemLink = new ExtractItem();
         itemLink.setName("title_link");
         itemLink.setExtractType(ExtractType.EXTRACT_LINK);
         itemLink.setXpaths(xpaths);
 
+        ExtractItem itemTime = new ExtractItem();
+        itemTime.setExtractType(ExtractType.EXTRACT_TEXT);
+        List<String> timeXPaths = new ArrayList<>();
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[1]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[2]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[3]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[4]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[5]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[6]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/span");
+        itemTime.setXpaths(timeXPaths);
+        itemTime.setName("date");
+
         List<ExtractItem> items = new ArrayList<>();
         items.add(item);
         items.add(itemLink);
+        items.add(itemTime);
+        // --------------------------------------------------------------------//
         // extractRule
         ExtractRule extractRule = new ExtractRule();
         extractRule.setExtractItems(items);
@@ -60,7 +76,7 @@ public class CommonSpiderTests {
 
             }
         });
-
+        // --------------------------------------------------------------------//
         // config
         Config config = new Config();
         config.setTimeout(10000);
@@ -71,6 +87,7 @@ public class CommonSpiderTests {
                 .config(config)
                 .rule(extractRule)
                 .build();
+        // --------------------------------------------------------------------//
         // start
         TSpiderProcessor.Builder builder1 = new TSpiderProcessor.Builder();
         builder1.task(task)
