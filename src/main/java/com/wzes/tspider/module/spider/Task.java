@@ -58,6 +58,7 @@ public class Task {
         this.config = task.config;
         this.extractRules = task.extractRules;
         this.pageType = task.pageType;
+        this.numTheads = task.numTheads;
     }
 
     /**

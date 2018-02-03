@@ -13,4 +13,20 @@ import java.util.List;
 public class ExtractRule {
     private List<ExtractItem> extractItems;
     private OnCrawlListener onCrawlListener;
+
+    public List<ExtractItem> getExtractItems() {
+        return extractItems;
+    }
+
+    public void setExtractItems(List<ExtractItem> extractItems) {
+        this.extractItems = extractItems;
+    }
+
+    public OnCrawlListener getOnCrawlListener() {
+        return onCrawlListener;
+    }
+
+    public void setOnCrawlListener(OnCrawlListener onCrawlListener) {
+        this.onCrawlListener = onCrawlListener;
+    }
 }

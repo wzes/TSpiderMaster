@@ -19,4 +19,28 @@ public class ExtractItem {
      * 爬取的内容类型
      */
     private ExtractType extractType;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<String> getXpaths() {
+        return xpaths;
+    }
+
+    public void setXpaths(List<String> xpaths) {
+        this.xpaths = xpaths;
+    }
+
+    public ExtractType getExtractType() {
+        return extractType;
+    }
+
+    public void setExtractType(ExtractType extractType) {
+        this.extractType = extractType;
+    }
 }
