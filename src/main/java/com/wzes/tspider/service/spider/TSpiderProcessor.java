@@ -1,8 +1,14 @@
 package com.wzes.tspider.service.spider;
 
-import com.wzes.tspider.module.spider.Task;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+import com.wzes.tspider.module.spider.*;
 import com.wzes.tspider.service.store.PipeLine;
+import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +17,9 @@ import java.util.List;
  * @date on 1/29/18
  */
 public class TSpiderProcessor {
+
+    private Logger logger = Logger.getLogger(TSpiderProcessor.class);
+
     /**
      * 任务集合
      */
@@ -82,6 +91,25 @@ public class TSpiderProcessor {
      * 启动爬虫
      */
     public void start() {
+        // check
+        if (tasks != null && tasks.size() > 0) {
+            for (Task task : tasks) {
+                PageType pageType = task.getPageType();
+                switch (pageType) {
+                    case PAGE_COMMON:
+                        Spider.commonCrawl(task);
+                        break;
+                    case PAGE_AJAX:
+                        break;
+                    case PAGE_ROLL:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
     }
+
+
 }
