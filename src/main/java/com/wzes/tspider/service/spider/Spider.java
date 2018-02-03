@@ -182,7 +182,7 @@ public class Spider {
     }
 
     /**
-     * TODO 多线程爬取
+     * TODO 多线程爬取 边爬边写文件，最佳文件
      * 普通单个任务爬取
      * @param task task
      */
@@ -190,41 +190,50 @@ public class Spider {
         //
         List<ExtractRule> extractRules = task.getExtractRules();
         WebClient webClient = Spider.getCommonSpider(task.getConfig());
-        List<HtmlPage> pages = null;
+        // init
+        Result[] results = new Result[extractRules.size()];
+        for (int index = 0; index < results.length; index++) {
+            results[index] = new Result();
+        }
         //
-        for (ExtractRule extractRule : extractRules) {
+        for (String url : task.getUrls()) {
+            HtmlPage page = null;
             //
-            Result result = new Result();
-            //
-            if (pages == null) {
-                pages = new ArrayList<>();
+            for (int index = 0; index < extractRules.size(); index++) {
+                ExtractRule extractRule = extractRules.get(index);
                 try {
-                    for (String url : task.getUrls()) {
-                        pages.add(webClient.getPage(url));
+                    if (page == null) {
+                        page = webClient.getPage(url);
                     }
                 } catch (IOException e) {
                     // 异常
                     if (extractRule.getOnCrawlListener() != null) {
                         extractRule.getOnCrawlListener().onError(e.getCause());
                     }
+                    break;
+                }
+                //
+                for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
+                    ExtractItem extractItem = extractRule.getExtractItems().get(j);
+                    // 爬取内容
+                    Result.Item item = Spider.getContent(page, extractItem);
+                    // 内容追加
+                    if (results[index].getItems() == null
+                            || results[index].getItems().size() < extractRule.getExtractItems().size()) {
+                        results[index].addItem(item);
+                    } else {
+                        results[index].getItems().get(j).addValues(item.getValues());
+                    }
                 }
             }
-            //
-            if (pages.size() == 0) {
-                extractRule.getOnCrawlListener().onError(new NullPointerException());
-                return;
-            }
-            //
-            for (ExtractItem extractItem : extractRule.getExtractItems()) {
-                // 爬取内容
-                Result.Item item = Spider.getContent(pages, extractItem);
-                result.addItem(item);
-            }
-            // 爬取内容
+        }
+        // 爬取内容
+        for (int index = 0; index < extractRules.size(); index++) {
+            ExtractRule extractRule = extractRules.get(index);
             if (extractRule.getOnCrawlListener() != null) {
-                extractRule.getOnCrawlListener().onNext(result);
+                extractRule.getOnCrawlListener().onNext(results[index]);
             }
-            //
+            // 爬取结束
             if (extractRule.getOnCrawlListener() != null) {
                 extractRule.getOnCrawlListener().onComplete();
             }

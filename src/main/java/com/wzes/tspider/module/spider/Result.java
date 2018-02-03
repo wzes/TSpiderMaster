@@ -88,6 +88,14 @@ public class Result {
         public void setExtractType(ExtractType extractType) {
             this.extractType = extractType;
         }
+
+        public void addValues(List<String> values) {
+            if (this.values == null) {
+                this.values = values;
+            } else {
+                this.values.addAll(values);
+            }
+        }
     }
 
     /**
