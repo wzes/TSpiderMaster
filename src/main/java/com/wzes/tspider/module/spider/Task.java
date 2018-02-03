@@ -24,6 +24,10 @@ public class Task {
      * 页面类型
      */
     private PageType pageType;
+    /**
+     * 线程数
+     */
+    private int numTheads;
 
     public List<String> getUrls() {
         return urls;
@@ -106,6 +110,16 @@ public class Task {
          */
         public Builder config(Config config) {
             task.config = config;
+            return this;
+        }
+
+        /**
+         * 配置线程数
+         * @param number 数量
+         * @return this
+         */
+        public Builder numThreads(int number) {
+            task.numTheads = number;
             return this;
         }
 

@@ -11,6 +11,6 @@ import java.util.List;
  * 一个规则对应一个文件
  */
 public class ExtractRule {
-    private List<Item> items;
+    private List<ExtractItem> extractItems;
     private OnCrawlListener onCrawlListener;
 }
