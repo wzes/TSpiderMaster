@@ -8,13 +8,13 @@ import java.util.List;
  * @author Create by xuantang
  * @date on 1/31/18
  */
-public class PipLine {
+public class PipeLine {
     private List<Result> results;
 
     /**
      * 保存
      */
-    public void save() {
+    public void storage() {
 
     }
 }
