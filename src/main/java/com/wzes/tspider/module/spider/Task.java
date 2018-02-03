@@ -82,6 +82,29 @@ public class Task {
         }
 
         /**
+         *
+         * @param rules
+         * @return
+         */
+        public Builder rules(List<ExtractRule> rules) {
+            task.extractRules = rules;
+            return this;
+        }
+
+        /**
+         *
+         * @param rule
+         * @return
+         */
+        public Builder rule(ExtractRule rule) {
+            if (task.extractRules == null) {
+                task.extractRules = new ArrayList<>();
+            }
+            task.extractRules.add(rule);
+            return this;
+        }
+
+        /**
          * 配置单个页面地址
          * @param url 爬取的页面地址
          * @return This Task

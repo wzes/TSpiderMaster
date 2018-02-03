@@ -10,6 +10,7 @@ import java.util.List;
  * 一个 ExtractRule 对应一个 Result
  */
 public class Result {
+    private static final String SPLIT_WORD = " ";
     /**
      * 结果
      */
@@ -86,6 +87,34 @@ public class Result {
 
         public void setExtractType(ExtractType extractType) {
             this.extractType = extractType;
+        }
+    }
+
+    /**
+     * 表格显示结果
+     */
+    public void show() {
+        int[] size = new int[items.size()];
+        String[] names = new String[items.size()];
+        int max = 0;
+        for (int index = 0; index < size.length; index++) {
+            size[index] = items.get(0).getValues().size();
+            names[index] = items.get(index).getName();
+            if (max < size[index]) {
+                max = size[index];
+            }
+        }
+        for (int index = 0; index < size.length; index++ ) {
+            System.out.print(names[index] + SPLIT_WORD);
+        }
+        System.out.print("\n");
+        for (int index = 0; index < max; index++ ) {
+            for (int j = 0; j < size.length; j++ ) {
+                if (index < size[j]) {
+                    System.out.print(items.get(j).getValues().get(index) + SPLIT_WORD);
+                }
+            }
+            System.out.print("\n");
         }
     }
 }
