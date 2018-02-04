@@ -23,11 +23,15 @@ public class Task {
     /**
      * 页面类型
      */
-    private PageType pageType;
+    private PageType pageType = PageType.PAGE_COMMON;
     /**
      * 线程数
      */
-    private int numTheads;
+    private int numThreads = 1;
+
+    public int getNumThreads() {
+        return numThreads;
+    }
 
     public List<String> getUrls() {
         return urls;
@@ -58,7 +62,7 @@ public class Task {
         this.config = task.config;
         this.extractRules = task.extractRules;
         this.pageType = task.pageType;
-        this.numTheads = task.numTheads;
+        this.numThreads = task.numThreads;
     }
 
     /**
@@ -143,7 +147,7 @@ public class Task {
          * @return this
          */
         public Builder numThreads(int number) {
-            task.numTheads = number;
+            task.numThreads = number;
             return this;
         }
 

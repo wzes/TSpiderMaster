@@ -95,7 +95,7 @@ public class TSpiderProcessor {
                 PageType pageType = task.getPageType();
                 switch (pageType) {
                     case PAGE_COMMON:
-                        Spider.commonCrawl(task);
+                        Spider.commonMutilCrawl(task);
                         break;
                     case PAGE_AJAX:
                         break;

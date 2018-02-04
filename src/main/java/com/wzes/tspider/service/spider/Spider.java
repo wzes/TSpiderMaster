@@ -10,6 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Create by xuantang
@@ -238,6 +241,15 @@ public class Spider {
             }
         }
         // 爬取内容
+        HandleResult(extractRules, results);
+    }
+
+    /**
+     * 处理结果
+     * @param extractRules 爬取规则
+     * @param results
+     */
+    private static void HandleResult(List<ExtractRule> extractRules, Result[] results) {
         for (int index = 0; index < extractRules.size(); index++) {
             ExtractRule extractRule = extractRules.get(index);
             if (extractRule.getOnCrawlListener() != null) {
@@ -248,5 +260,71 @@ public class Spider {
                 extractRule.getOnCrawlListener().onComplete();
             }
         }
+    }
+
+    /**
+     * TODO 多线程爬取 边爬边写文件，最佳文件
+     * 普通单个任务爬取
+     * @param task task
+     */
+    public static void commonMutilCrawl(Task task) {
+        //
+        List<ExtractRule> extractRules = task.getExtractRules();
+        // init
+        Result[] results = new Result[extractRules.size()];
+        for (int index = 0; index < results.length; index++) {
+            results[index] = new Result();
+        }
+
+        UrlWarehouse.getInstance().setUrls(task.getUrls());
+
+//        // 设置 name
+//        for (int index = 0; index < results.length; index++) {
+//            for (int j = 0; j < extractRules.get(index).getExtractItems().size(); j++) {
+//                results[index].getItems().get(j).setName(
+//                        extractRules.get(index).getExtractItems().get(j).getName());
+//                results[index].getItems().get(j).setExtractType(
+//                        extractRules.get(index).getExtractItems().get(j).getExtractType());
+//            }
+//
+//        }
+        //
+        int numOfThreads = task.getNumThreads();
+        // 创建线程池
+        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+        final CountDownLatch countDown = new CountDownLatch(numOfThreads);
+        List<CrawlThread> crawlThreads = new ArrayList<>();
+        for (int index = 0; index < numOfThreads; index++) {
+            CrawlThread crawlThread = new CrawlThread(task, countDown);
+            crawlThreads.add(crawlThread);
+            executorService.execute(crawlThread);
+        }
+        // 关闭线程池
+        executorService.shutdown();
+        try {
+            countDown.await();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // 执行完合并结果
+        boolean first = true;
+        for (CrawlThread crawlThread : crawlThreads) {
+            Result[] threadResults = crawlThread.getResults();
+            for (int index = 0; index < threadResults.length; index++) {
+                if (first) {
+                    results[index] = threadResults[index];
+                    first = false;
+                } else {
+                    for (int j = 0; j < threadResults[index].getItems().size(); j++) {
+                        results[index].getItems().get(j).addValues(
+                                threadResults[index].getItems().get(j).getValues());
+                    }
+                }
+            }
+        }
+
+        // 爬取内容
+        HandleResult(extractRules, results);
     }
 }

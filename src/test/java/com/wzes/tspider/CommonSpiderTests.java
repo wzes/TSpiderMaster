@@ -83,9 +83,13 @@ public class CommonSpiderTests {
         Task task = builder.url("http://sse.tongji.edu.cn/Data/List/xyxw")
                 .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=2")
                 .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=3")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=4")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=5")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=6")
                 .type(PageType.PAGE_COMMON)
                 .config(config)
                 .rule(extractRule)
+                .numThreads(4)
                 .build();
         // --------------------------------------------------------------------//
         // start
