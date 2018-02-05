@@ -84,39 +84,39 @@ public class Spider {
     }
 
     /**
-     *
+     * 根据一组页面爬取 item 返回结果 item
      * @param page
      * @param extractItem
-     * @return
+     * @return item
      */
     public static Result.Item getContent(List<HtmlPage> pages, ExtractItem extractItem) {
         Result.Item item = new Result().new Item();
         ExtractType extractType = extractItem.getExtractType();
-        List<String> xpaths = extractItem.getXpaths();
+        List<String> XPaths = extractItem.getXpaths();
         String name = extractItem.getName();
         List<String> values = new ArrayList<>();
         for (HtmlPage htmlPage : pages) {
-            getValueFromPage(htmlPage, extractType, xpaths, values);
+            values.addAll(getValuesFromPage(htmlPage, extractType, XPaths));
         }
-        item.setSize(xpaths.size());
+        item.setSize(XPaths.size());
         item.setName(name);
         item.setExtractType(extractType);
         item.setValues(values);
         return item;
     }
     /**
-     *
+     * 根据一个页面爬取 item 返回结果 item
      * @param page
      * @param extractItem
-     * @return
+     * @return item
      */
     public static Result.Item getContent(HtmlPage page, ExtractItem extractItem) {
         Result.Item item = new Result().new Item();
         ExtractType extractType = extractItem.getExtractType();
-        List<String> xpaths = extractItem.getXpaths();
+        List<String> XPaths = extractItem.getXpaths();
         String name = extractItem.getName();
-        List<String> values = new ArrayList<>();
-        getValueFromPage(page, extractType, xpaths, values);
+        // 获取结果
+        List<String> values = getValuesFromPage(page, extractType, XPaths);
         item.setSize(values.size());
         item.setName(name);
         item.setExtractType(extractType);
@@ -126,16 +126,17 @@ public class Spider {
 
 
     /**
-     *
+     * 爬取一个页面的对应的XPaths的内容并保存到values中
      * @param page
      * @param extractType
      * @param xpaths
      * @param values
      */
-    private static void getValueFromPage(HtmlPage page, ExtractType extractType, List<String> xpaths, List<String> values) {
-        for (String xpath : xpaths) {
+    private static List<String> getValuesFromPage(HtmlPage page, ExtractType extractType, List<String> XPaths) {
+        List<String> values = new ArrayList<>();
+        for (String XPath : XPaths) {
             try {
-                List<Object> byXPath = page.getByXPath(xpath);
+                List<Object> byXPath = page.getByXPath(XPath);
                 if (byXPath.size() > 0) {
                     Object o = byXPath.get(0);
                     switch (extractType) {
@@ -174,6 +175,7 @@ public class Spider {
                 values.add("-");
             }
         }
+        return values;
     }
 
 
@@ -194,60 +196,83 @@ public class Spider {
         }
     }
 
+//    /**
+//     * TODO 多线程爬取 边爬边写文件，最佳文件
+//     * 普通单个任务爬取
+//     * @param task task
+//     */
+//    public static void commonCrawl(Task task) {
+//        //
+//        List<ExtractRule> extractRules = task.getExtractRules();
+//        WebClient webClient = Spider.getCommonSpider(task.getConfig());
+//        // init
+//        Result[] results = new Result[extractRules.size()];
+//        for (int index = 0; index < results.length; index++) {
+//            results[index] = new Result();
+//        }
+//        //
+//        for (String url : task.getUrls()) {
+//            HtmlPage page = null;
+//            //
+//            for (int index = 0; index < extractRules.size(); index++) {
+//                ExtractRule extractRule = extractRules.get(index);
+//                try {
+//                    if (page == null) {
+//                        page = webClient.getPage(url);
+//                    }
+//                } catch (IOException e) {
+//                    // 异常
+//                    if (extractRule.getOnCrawlListener() != null) {
+//                        extractRule.getOnCrawlListener().onError(e.getCause());
+//                    }
+//                    break;
+//                }
+//                //
+//                for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
+//                    ExtractItem extractItem = extractRule.getExtractItems().get(j);
+//                    // 爬取内容
+//                    Result.Item item = Spider.getContent(page, extractItem);
+//                    // 内容追加
+//                    if (results[index].getItems() == null
+//                            || results[index].getItems().size() < extractRule.getExtractItems().size()) {
+//                        results[index].addItem(item);
+//                    } else {
+//                        results[index].getItems().get(j).addValues(item.getValues());
+//                    }
+//                }
+//            }
+//        }
+//        // 爬取内容
+//        HandleResult(extractRules, results);
+//    }
     /**
-     * TODO 多线程爬取 边爬边写文件，最佳文件
-     * 普通单个任务爬取
-     * @param task task
+     * 合并结果
+     * @param crawlThreads 开启的线程集合
+     * @param results 返回的结果集
      */
-    public static void commonCrawl(Task task) {
-        //
-        List<ExtractRule> extractRules = task.getExtractRules();
-        WebClient webClient = Spider.getCommonSpider(task.getConfig());
-        // init
-        Result[] results = new Result[extractRules.size()];
-        for (int index = 0; index < results.length; index++) {
-            results[index] = new Result();
-        }
-        //
-        for (String url : task.getUrls()) {
-            HtmlPage page = null;
-            //
-            for (int index = 0; index < extractRules.size(); index++) {
-                ExtractRule extractRule = extractRules.get(index);
-                try {
-                    if (page == null) {
-                        page = webClient.getPage(url);
-                    }
-                } catch (IOException e) {
-                    // 异常
-                    if (extractRule.getOnCrawlListener() != null) {
-                        extractRule.getOnCrawlListener().onError(e.getCause());
-                    }
-                    break;
-                }
-                //
-                for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
-                    ExtractItem extractItem = extractRule.getExtractItems().get(j);
-                    // 爬取内容
-                    Result.Item item = Spider.getContent(page, extractItem);
-                    // 内容追加
-                    if (results[index].getItems() == null
-                            || results[index].getItems().size() < extractRule.getExtractItems().size()) {
-                        results[index].addItem(item);
-                    } else {
-                        results[index].getItems().get(j).addValues(item.getValues());
+    private static void mergeResult(List<CrawlThread> crawlThreads, Result[] results) {
+        // 执行完合并结果
+        boolean first = true;
+        for (CrawlThread crawlThread : crawlThreads) {
+            Result[] threadResults = crawlThread.getResults();
+            for (int index = 0; index < threadResults.length; index++) {
+                if (first) {
+                    results[index] = threadResults[index];
+                    first = false;
+                } else {
+                    for (int j = 0; j < threadResults[index].getItems().size(); j++) {
+                        results[index].getItems().get(j).addValues(
+                                threadResults[index].getItems().get(j).getValues());
                     }
                 }
             }
         }
-        // 爬取内容
-        HandleResult(extractRules, results);
     }
 
     /**
      * 处理结果
      * @param extractRules 爬取规则
-     * @param results
+     * @param results 返回的结果集
      */
     private static void HandleResult(List<ExtractRule> extractRules, Result[] results) {
         for (int index = 0; index < extractRules.size(); index++) {
@@ -267,7 +292,7 @@ public class Spider {
      * 普通单个任务爬取
      * @param task task
      */
-    public static void commonMutilCrawl(Task task) {
+    public static void commonCrawl(Task task) {
         //
         List<ExtractRule> extractRules = task.getExtractRules();
         // init
@@ -275,26 +300,16 @@ public class Spider {
         for (int index = 0; index < results.length; index++) {
             results[index] = new Result();
         }
-
+        // 设置 url 仓库
         UrlWarehouse.getInstance().setUrls(task.getUrls());
-
-//        // 设置 name
-//        for (int index = 0; index < results.length; index++) {
-//            for (int j = 0; j < extractRules.get(index).getExtractItems().size(); j++) {
-//                results[index].getItems().get(j).setName(
-//                        extractRules.get(index).getExtractItems().get(j).getName());
-//                results[index].getItems().get(j).setExtractType(
-//                        extractRules.get(index).getExtractItems().get(j).getExtractType());
-//            }
-//
-//        }
-        //
+        // 线程数
         int numOfThreads = task.getNumThreads();
         // 创建线程池
         ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
         final CountDownLatch countDown = new CountDownLatch(numOfThreads);
         List<CrawlThread> crawlThreads = new ArrayList<>();
         for (int index = 0; index < numOfThreads; index++) {
+            // 创建线程
             CrawlThread crawlThread = new CrawlThread(task, countDown);
             crawlThreads.add(crawlThread);
             executorService.execute(crawlThread);
@@ -307,22 +322,9 @@ public class Spider {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // 执行完合并结果
-        boolean first = true;
-        for (CrawlThread crawlThread : crawlThreads) {
-            Result[] threadResults = crawlThread.getResults();
-            for (int index = 0; index < threadResults.length; index++) {
-                if (first) {
-                    results[index] = threadResults[index];
-                    first = false;
-                } else {
-                    for (int j = 0; j < threadResults[index].getItems().size(); j++) {
-                        results[index].getItems().get(j).addValues(
-                                threadResults[index].getItems().get(j).getValues());
-                    }
-                }
-            }
-        }
+
+        // 合并结果
+        mergeResult(crawlThreads, results);
 
         // 爬取内容
         HandleResult(extractRules, results);
