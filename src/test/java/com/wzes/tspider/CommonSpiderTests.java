@@ -1,5 +1,6 @@
 package com.wzes.tspider;
 
+import com.alibaba.fastjson.JSON;
 import com.wzes.tspider.module.spider.*;
 import com.wzes.tspider.service.listener.OnCrawlListener;
 import com.wzes.tspider.service.spider.TSpiderProcessor;
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Create by xuantang
  * @date on 2/3/18
  */
-public class CommonHtmlUnitSpiderTests {
+public class CommonSpiderTests {
     @Test
     public void SseTest() {
         Task.Builder builder = new Task.Builder();
@@ -91,6 +92,31 @@ public class CommonHtmlUnitSpiderTests {
                 .rule(extractRule)
                 .numThreads(4)
                 .build();
+
+        String data = JSON.toJSONString(task);
+        System.out.println(data);
+        Task rTask = JSON.parseObject(data, Task.class);
+
+        for (int index = 0; index < rTask.getExtractRules().size(); index++) {
+            rTask.getExtractRules().get(index).setOnCrawlListener(new OnCrawlListener() {
+                @Override
+                public void onNext(Result result) {
+                    result.show();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    System.out.println(e.getMessage());
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
+        }
+
+        //System.out.println(rTask.getNumThreads());
         // --------------------------------------------------------------------//
         // start
         TSpiderProcessor.Builder builder1 = new TSpiderProcessor.Builder();

@@ -59,6 +59,9 @@ public class UrlWarehouse {
         this.index = index;
     }
 
+    public void clear() {
+        index = 0;
+    }
 
     /**
      * 获取单个 url

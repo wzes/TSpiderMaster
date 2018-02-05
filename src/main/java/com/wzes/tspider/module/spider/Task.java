@@ -29,6 +29,26 @@ public class Task {
      */
     private int numThreads = 1;
 
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
+    public void setExtractRules(List<ExtractRule> extractRules) {
+        this.extractRules = extractRules;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public void setPageType(PageType pageType) {
+        this.pageType = pageType;
+    }
+
+    public void setNumThreads(int numThreads) {
+        this.numThreads = numThreads;
+    }
+
     public int getNumThreads() {
         return numThreads;
     }
@@ -49,7 +69,11 @@ public class Task {
         return pageType;
     }
 
-    private Task() {
+//    private Task() {
+//
+//    }
+
+    public Task() {
 
     }
 

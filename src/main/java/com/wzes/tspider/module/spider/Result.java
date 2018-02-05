@@ -117,6 +117,9 @@ public class Result {
      * 表格显示结果
      */
     public void show() {
+        if (items == null) {
+            return;
+        }
         int size = items.size();
         String[] names = new String[items.size()];
         int max = 0;

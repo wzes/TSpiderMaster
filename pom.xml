@@ -78,6 +78,13 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.45</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+		<dependency>
+			<groupId>com.squareup.okhttp</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>2.7.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

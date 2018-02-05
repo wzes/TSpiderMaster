@@ -31,9 +31,11 @@ public class ExtractProcessor {
                     results[index] = threadResults[index];
                     first = false;
                 } else {
-                    for (int j = 0; j < threadResults[index].getItems().size(); j++) {
-                        results[index].getItems().get(j).addValues(
-                                threadResults[index].getItems().get(j).getValues());
+                    if (threadResults[index].getItems() != null) {
+                        for (int j = 0; j < threadResults[index].getItems().size(); j++) {
+                            results[index].getItems().get(j).addValues(
+                                    threadResults[index].getItems().get(j).getValues());
+                        }
                     }
                 }
             }
@@ -94,7 +96,8 @@ public class ExtractProcessor {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        // 清除
+        UrlWarehouse.getInstance().clear();
         // 合并结果
         mergeResult(crawlThreads, results);
 
