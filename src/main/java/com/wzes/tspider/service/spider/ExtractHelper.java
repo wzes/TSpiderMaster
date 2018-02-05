@@ -16,13 +16,11 @@ import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wzes.tspider.service.spider.HtmlUnitSpider.getAbsUrl;
-
 /**
  * @author Create by xuantang
  * @date on 2/3/18
  */
-public class CommonSpider {
+public class ExtractHelper {
 
     /**
      * 根据一个页面爬取 item 返回结果 item
@@ -76,15 +74,15 @@ public class CommonSpider {
                                 content = node.getTextContent().trim();
                                 break;
                             case EXTRACT_LINK:
-                                content = getAbsUrl(url, node.getAttributes()
+                                content = UrlHelper.getAbsUrl(url, node.getAttributes()
                                         .getNamedItem("href").getNodeValue());
                                 break;
                             case EXTRACT_IMAGE:
-                                content = getAbsUrl(url, node.getAttributes()
+                                content = UrlHelper.getAbsUrl(url, node.getAttributes()
                                         .getNamedItem("src").getNodeValue());
                                 break;
                             case EXTRACT_FILE:
-                                content = getAbsUrl(url, node.getAttributes()
+                                content = UrlHelper.getAbsUrl(url, node.getAttributes()
                                         .getNamedItem("src").getNodeValue());
                                 break;
                             default:

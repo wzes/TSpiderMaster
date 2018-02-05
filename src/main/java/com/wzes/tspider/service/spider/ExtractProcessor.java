@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  * @author Create by xuantang
  * @date on 2/5/18
  */
-public class ExtractProceesor {
+public class ExtractProcessor {
 
     /**
      * 合并结果

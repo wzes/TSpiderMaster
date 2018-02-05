@@ -1,14 +1,11 @@
 package com.wzes.tspider.service.spider;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.wzes.tspider.module.spider.ExtractItem;
 import com.wzes.tspider.module.spider.ExtractRule;
 import com.wzes.tspider.module.spider.Result;
 import com.wzes.tspider.module.spider.Task;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -82,7 +79,7 @@ public class CrawlThread implements Runnable {
                 for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
                     ExtractItem extractItem = extractRule.getExtractItems().get(j);
                     // 爬取内容
-                    Result.Item item = CommonSpider.getContent(url, html, extractItem);
+                    Result.Item item = ExtractHelper.getContent(url, html, extractItem);
                     // 内容追加
                     if (results[index].getItems() == null
                             || results[index].getItems().size() < extractRule.getExtractItems().size()) {

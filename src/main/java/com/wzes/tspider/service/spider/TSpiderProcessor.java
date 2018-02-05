@@ -92,7 +92,7 @@ public class TSpiderProcessor {
                 PageType pageType = task.getPageType();
                 switch (pageType) {
                     case PAGE_COMMON:
-                        HtmlUnitSpider.commonCrawl(task);
+                        ExtractProcessor.commonCrawl(task);
                         break;
                     case PAGE_AJAX:
                         break;

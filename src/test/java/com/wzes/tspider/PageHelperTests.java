@@ -1,10 +1,8 @@
 package com.wzes.tspider;
 
 import com.wzes.tspider.module.spider.*;
-import com.wzes.tspider.service.listener.OnCrawlListener;
-import com.wzes.tspider.service.spider.CommonSpider;
+import com.wzes.tspider.service.spider.ExtractHelper;
 import com.wzes.tspider.service.spider.PageHelper;
-import com.wzes.tspider.service.spider.TSpiderProcessor;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ public class PageHelperTests {
         XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/a");
         XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/a");
 
-        List<String> values = CommonSpider.getValuesFromPage("http://sse.tongji.edu.cn/Data/List/xyxw",
+        List<String> values = ExtractHelper.getValuesFromPage("http://sse.tongji.edu.cn/Data/List/xyxw",
                 html, ExtractType.EXTRACT_LINK, XPaths);
         for(String val : values) {
             System.out.println(val);
