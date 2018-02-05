@@ -1,8 +1,8 @@
 package com.wzes.tspider;
 
 import com.wzes.tspider.module.spider.*;
-import com.wzes.tspider.service.spider.ExtractHelper;
-import com.wzes.tspider.service.spider.PageHelper;
+import com.wzes.tspider.service.spider.ExtractUtils;
+import com.wzes.tspider.service.spider.PageUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -12,10 +12,10 @@ import java.util.List;
  * @author Create by xuantang
  * @date on 2/3/18
  */
-public class PageHelperTests {
+public class PageUtilsTests {
     @Test
     public void SseTest() {
-        String html = PageHelper.get("http://sse.tongji.edu.cn/Data/List/xyxw");
+        String html = PageUtils.get("http://sse.tongji.edu.cn/Data/List/xyxw");
         //System.out.println(html);
         List<String> XPaths = new ArrayList<>();
         XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[1]/a");
@@ -27,7 +27,7 @@ public class PageHelperTests {
         XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/a");
         XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/a");
 
-        List<String> values = ExtractHelper.getValuesFromPage("http://sse.tongji.edu.cn/Data/List/xyxw",
+        List<String> values = ExtractUtils.getValuesFromPage("http://sse.tongji.edu.cn/Data/List/xyxw",
                 html, ExtractType.EXTRACT_LINK, XPaths);
         for(String val : values) {
             System.out.println(val);

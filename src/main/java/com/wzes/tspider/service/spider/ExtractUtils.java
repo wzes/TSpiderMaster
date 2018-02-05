@@ -20,7 +20,7 @@ import java.util.List;
  * @author Create by xuantang
  * @date on 2/3/18
  */
-public class ExtractHelper {
+public class ExtractUtils {
 
     /**
      * 根据一个页面爬取 item 返回结果 item
@@ -74,15 +74,15 @@ public class ExtractHelper {
                                 content = node.getTextContent().trim();
                                 break;
                             case EXTRACT_LINK:
-                                content = UrlHelper.getAbsUrl(url, node.getAttributes()
+                                content = UrlUtils.getAbsUrl(url, node.getAttributes()
                                         .getNamedItem("href").getNodeValue());
                                 break;
                             case EXTRACT_IMAGE:
-                                content = UrlHelper.getAbsUrl(url, node.getAttributes()
+                                content = UrlUtils.getAbsUrl(url, node.getAttributes()
                                         .getNamedItem("src").getNodeValue());
                                 break;
                             case EXTRACT_FILE:
-                                content = UrlHelper.getAbsUrl(url, node.getAttributes()
+                                content = UrlUtils.getAbsUrl(url, node.getAttributes()
                                         .getNamedItem("src").getNodeValue());
                                 break;
                             default:

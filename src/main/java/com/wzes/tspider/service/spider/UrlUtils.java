@@ -7,7 +7,7 @@ import java.net.URL;
  * @author Create by xuantang
  * @date on 2/5/18
  */
-public class UrlHelper {
+public class UrlUtils {
     /**
      * 获取绝对链接
      * @param basePath the base url

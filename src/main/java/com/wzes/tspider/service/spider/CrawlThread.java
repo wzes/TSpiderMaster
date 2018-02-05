@@ -61,7 +61,7 @@ public class CrawlThread implements Runnable {
             logger.info(Thread.currentThread() + " get page: " + url);
             String html = null;
             try {
-                html = PageHelper.get(url);
+                html = PageUtils.get(url);
             } catch (Exception e) {
                 logger.error(Thread.currentThread() + " get page: " + url);
             }
@@ -79,7 +79,7 @@ public class CrawlThread implements Runnable {
                 for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
                     ExtractItem extractItem = extractRule.getExtractItems().get(j);
                     // 爬取内容
-                    Result.Item item = ExtractHelper.getContent(url, html, extractItem);
+                    Result.Item item = ExtractUtils.getContent(url, html, extractItem);
                     // 内容追加
                     if (results[index].getItems() == null
                             || results[index].getItems().size() < extractRule.getExtractItems().size()) {

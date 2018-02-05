@@ -11,7 +11,7 @@ import java.io.IOException;
  *
  * 获取页面
  */
-public class PageHelper {
+public class PageUtils {
 
     /**
      *

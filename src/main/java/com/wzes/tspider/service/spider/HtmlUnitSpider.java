@@ -149,12 +149,12 @@ public class HtmlUnitSpider {
                             }
                             break;
                         case EXTRACT_LINK:
-                            values.add(UrlHelper.getAbsUrl(((HtmlAnchor) o).getBaseURI(),
+                            values.add(UrlUtils.getAbsUrl(((HtmlAnchor) o).getBaseURI(),
                                     ((HtmlAnchor) o).getHrefAttribute()));
                             break;
 
                         case EXTRACT_IMAGE:
-                            values.add(UrlHelper.getAbsUrl(((HtmlImage) o).getBaseURI(),
+                            values.add(UrlUtils.getAbsUrl(((HtmlImage) o).getBaseURI(),
                                     ((HtmlImage) o).getSrcAttribute()));
                             break;
                         default:
