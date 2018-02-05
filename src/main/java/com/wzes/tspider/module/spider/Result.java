@@ -1,5 +1,7 @@
 package com.wzes.tspider.module.spider;
 
+import com.wzes.tspider.service.Constant;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,8 @@ import java.util.List;
  * 一个 ExtractRule 对应一个 Result
  */
 public class Result {
-    private static final String SPLIT_ITEM = " ";
-    private static final String SPLIT_LINE = "\n";
+    private static final String SPLIT_ITEM = Constant.RESULT_ITEM_SPLIT_SYMBOL;
+    private static final String SPLIT_LINE = Constant.RESULT_LINE_SPLIT_SYMBOL;
     /**
      * 结果
      */
@@ -127,16 +129,21 @@ public class Result {
         }
         // 输出标题
         for (int index = 0; index < size; index++ ) {
-            System.out.print(names[index] + SPLIT_ITEM);
-        }
-        // 换行
-        System.out.print(SPLIT_LINE);
-        // 输出行
-        for (int index = 0; index < max; index++ ) {
-            for (Item item : items) {
-                System.out.print(item.getValues().get(index) + SPLIT_ITEM);
+            if (index == size - 1) {
+                System.out.print(names[index] + SPLIT_LINE);
+            } else {
+                System.out.print(names[index] + SPLIT_ITEM);
             }
-            System.out.print(SPLIT_LINE);
+        }
+        // 输出内容
+        for (int index = 0; index < max; index++ ) {
+            for (int j = 0; j < items.size(); j++ ) {
+                if (j == items.size() - 1) {
+                    System.out.print(items.get(j).getValues().get(index) + SPLIT_LINE);
+                } else {
+                    System.out.print(items.get(j).getValues().get(index) + SPLIT_ITEM);
+                }
+            }
         }
     }
 }
