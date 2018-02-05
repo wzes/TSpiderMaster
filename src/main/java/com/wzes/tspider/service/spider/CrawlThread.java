@@ -9,7 +9,6 @@ import com.wzes.tspider.module.spider.Task;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -56,26 +55,26 @@ public class CrawlThread implements Runnable {
      */
     @Override
     public void run() {
-        logger.debug(Thread.currentThread() + " start crawling");
+        logger.info(Thread.currentThread() + " start crawling");
         // 从仓库获取一条url
         String url;
 
-        WebClient webClient = Spider.getCommonSpider(task.getConfig());
-
         while (!(url = UrlWarehouse.getInstance().getUrl()).isEmpty()) {
-            HtmlPage page = null;
-            logger.debug(Thread.currentThread() + " get page: " + url);
+            //HtmlPage page = null;
+            logger.info(Thread.currentThread() + " get page: " + url);
+            String html = null;
+            try {
+                html = PageHelper.get(url);
+            } catch (Exception e) {
+                logger.error(Thread.currentThread() + " get page: " + url);
+            }
             //
             for (int index = 0; index < ruleSize; index++) {
                 ExtractRule extractRule = task.getExtractRules().get(index);
-                try {
-                    if (page == null) {
-                        page = webClient.getPage(url);
-                    }
-                } catch (IOException e) {
-                    // 异常
+                // 页面获取失败
+                if (html == null || html.isEmpty()) {
                     if (extractRule.getOnCrawlListener() != null) {
-                        extractRule.getOnCrawlListener().onError(e.getCause());
+                        extractRule.getOnCrawlListener().onError(new NullPointerException());
                     }
                     break;
                 }
@@ -83,7 +82,7 @@ public class CrawlThread implements Runnable {
                 for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
                     ExtractItem extractItem = extractRule.getExtractItems().get(j);
                     // 爬取内容
-                    Result.Item item = Spider.getContent(page, extractItem);
+                    Result.Item item = CommonSpider.getContent(url, html, extractItem);
                     // 内容追加
                     if (results[index].getItems() == null
                             || results[index].getItems().size() < extractRule.getExtractItems().size()) {
@@ -99,6 +98,7 @@ public class CrawlThread implements Runnable {
                 e.printStackTrace();
             }
         }
+        logger.info(Thread.currentThread() + " end crawling");
         countDownLatch.countDown();
     }
 }
