@@ -1,4 +1,4 @@
-package com.mobile.vnews.module;
+package com.wzes.tspider.module;
 
 import com.alibaba.fastjson.JSONObject;
 
