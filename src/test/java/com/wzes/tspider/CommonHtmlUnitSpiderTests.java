@@ -12,7 +12,7 @@ import java.util.List;
  * @author Create by xuantang
  * @date on 2/3/18
  */
-public class CommonSpiderTests {
+public class CommonHtmlUnitSpiderTests {
     @Test
     public void SseTest() {
         Task.Builder builder = new Task.Builder();
@@ -21,21 +21,21 @@ public class CommonSpiderTests {
         ExtractItem item = new ExtractItem();
         item.setName("title");
         item.setExtractType(ExtractType.EXTRACT_TEXT);
-        List<String> xpaths = new ArrayList<>();
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[1]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[2]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[3]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[4]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[5]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[6]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/a");
-        xpaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/a");
-        item.setXpaths(xpaths);
+        List<String> XPaths = new ArrayList<>();
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[1]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[2]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[3]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[4]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[5]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[6]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/a");
+        item.setXpaths(XPaths);
         // item title link
         ExtractItem itemLink = new ExtractItem();
         itemLink.setName("title_link");
         itemLink.setExtractType(ExtractType.EXTRACT_LINK);
-        itemLink.setXpaths(xpaths);
+        itemLink.setXpaths(XPaths);
 
         ExtractItem itemTime = new ExtractItem();
         itemTime.setExtractType(ExtractType.EXTRACT_TEXT);

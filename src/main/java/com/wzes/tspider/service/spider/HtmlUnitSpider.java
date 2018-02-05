@@ -5,20 +5,14 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import com.wzes.tspider.module.spider.*;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author Create by xuantang
  * @date on 2/3/18
  */
-public class Spider {
+public class HtmlUnitSpider {
 
     /**
      * 获取普通的 WebClient
@@ -129,8 +123,7 @@ public class Spider {
      * 爬取一个页面的对应的XPaths的内容并保存到values中
      * @param page
      * @param extractType
-     * @param xpaths
-     * @param values
+     * @param XPaths
      */
     private static List<String> getValuesFromPage(HtmlPage page, ExtractType extractType, List<String> XPaths) {
         List<String> values = new ArrayList<>();
@@ -156,12 +149,12 @@ public class Spider {
                             }
                             break;
                         case EXTRACT_LINK:
-                            values.add(getAbsUrl(((HtmlAnchor) o).getBaseURI(),
+                            values.add(UrlHelper.getAbsUrl(((HtmlAnchor) o).getBaseURI(),
                                     ((HtmlAnchor) o).getHrefAttribute()));
                             break;
 
                         case EXTRACT_IMAGE:
-                            values.add(getAbsUrl(((HtmlImage) o).getBaseURI(),
+                            values.add(UrlHelper.getAbsUrl(((HtmlImage) o).getBaseURI(),
                                     ((HtmlImage) o).getSrcAttribute()));
                             break;
                         default:
@@ -178,24 +171,6 @@ public class Spider {
         return values;
     }
 
-
-    /**
-     * 获取绝对链接
-     * @param basePath the base url
-     * @param relativePath the relative url
-     * @return the absolute url
-     */
-    private static String getAbsUrl(String basePath, String relativePath){
-        try {
-            URL baseUrl = new URL(basePath);
-            URL parseUrl = new URL(baseUrl ,relativePath);
-            return parseUrl.toString();
-        }
-        catch (MalformedURLException e) {
-            return "";
-        }
-    }
-
 //    /**
 //     * TODO 多线程爬取 边爬边写文件，最佳文件
 //     * 普通单个任务爬取
@@ -204,7 +179,7 @@ public class Spider {
 //    public static void commonCrawl(Task task) {
 //        //
 //        List<ExtractRule> extractRules = task.getExtractRules();
-//        WebClient webClient = Spider.getCommonSpider(task.getConfig());
+//        WebClient webClient = HtmlUnitSpider.getCommonSpider(task.getConfig());
 //        // init
 //        Result[] results = new Result[extractRules.size()];
 //        for (int index = 0; index < results.length; index++) {
@@ -231,7 +206,7 @@ public class Spider {
 //                for (int j = 0; j < extractRule.getExtractItems().size(); j++) {
 //                    ExtractItem extractItem = extractRule.getExtractItems().get(j);
 //                    // 爬取内容
-//                    Result.Item item = Spider.getContent(page, extractItem);
+//                    Result.Item item = HtmlUnitSpider.getContent(page, extractItem);
 //                    // 内容追加
 //                    if (results[index].getItems() == null
 //                            || results[index].getItems().size() < extractRule.getExtractItems().size()) {
@@ -245,88 +220,4 @@ public class Spider {
 //        // 爬取内容
 //        HandleResult(extractRules, results);
 //    }
-    /**
-     * 合并结果
-     * @param crawlThreads 开启的线程集合
-     * @param results 返回的结果集
-     */
-    private static void mergeResult(List<CrawlThread> crawlThreads, Result[] results) {
-        // 执行完合并结果
-        boolean first = true;
-        for (CrawlThread crawlThread : crawlThreads) {
-            Result[] threadResults = crawlThread.getResults();
-            for (int index = 0; index < threadResults.length; index++) {
-                if (first) {
-                    results[index] = threadResults[index];
-                    first = false;
-                } else {
-                    for (int j = 0; j < threadResults[index].getItems().size(); j++) {
-                        results[index].getItems().get(j).addValues(
-                                threadResults[index].getItems().get(j).getValues());
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 处理结果
-     * @param extractRules 爬取规则
-     * @param results 返回的结果集
-     */
-    private static void HandleResult(List<ExtractRule> extractRules, Result[] results) {
-        for (int index = 0; index < extractRules.size(); index++) {
-            ExtractRule extractRule = extractRules.get(index);
-            if (extractRule.getOnCrawlListener() != null) {
-                extractRule.getOnCrawlListener().onNext(results[index]);
-            }
-            // 爬取结束
-            if (extractRule.getOnCrawlListener() != null) {
-                extractRule.getOnCrawlListener().onComplete();
-            }
-        }
-    }
-
-    /**
-     * TODO 多线程爬取 边爬边写文件，最佳文件
-     * 普通单个任务爬取
-     * @param task task
-     */
-    public static void commonCrawl(Task task) {
-        //
-        List<ExtractRule> extractRules = task.getExtractRules();
-        // init
-        Result[] results = new Result[extractRules.size()];
-        for (int index = 0; index < results.length; index++) {
-            results[index] = new Result();
-        }
-        // 设置 url 仓库
-        UrlWarehouse.getInstance().setUrls(task.getUrls());
-        // 线程数
-        int numOfThreads = task.getNumThreads();
-        // 创建线程池
-        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
-        final CountDownLatch countDown = new CountDownLatch(numOfThreads);
-        List<CrawlThread> crawlThreads = new ArrayList<>();
-        for (int index = 0; index < numOfThreads; index++) {
-            // 创建线程
-            CrawlThread crawlThread = new CrawlThread(task, countDown);
-            crawlThreads.add(crawlThread);
-            executorService.execute(crawlThread);
-        }
-        // 关闭线程池
-        executorService.shutdown();
-        try {
-            countDown.await();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // 合并结果
-        mergeResult(crawlThreads, results);
-
-        // 爬取内容
-        HandleResult(extractRules, results);
-    }
 }

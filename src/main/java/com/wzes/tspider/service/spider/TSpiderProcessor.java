@@ -1,11 +1,8 @@
 package com.wzes.tspider.service.spider;
 
 import com.wzes.tspider.module.spider.*;
-import com.wzes.tspider.service.listener.OnCrawlListener;
 import com.wzes.tspider.service.store.PipeLine;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +92,7 @@ public class TSpiderProcessor {
                 PageType pageType = task.getPageType();
                 switch (pageType) {
                     case PAGE_COMMON:
-                        Spider.commonMutilCrawl(task);
+                        HtmlUnitSpider.commonCrawl(task);
                         break;
                     case PAGE_AJAX:
                         break;
