@@ -21,18 +21,6 @@ public class RedisService {
 
     private static final int DEFAULT_ACQUIRE_RESOLUTION_MILLIS = 100;
 
-    /**
-     * Lock key path.
-     */
-    private String lockKey = "tspider";
-
-    public String getLockKey() {
-        return lockKey;
-    }
-
-    public void setLockKey(String lockKey) {
-        this.lockKey = lockKey;
-    }
 
     public int getExpireMsecs() {
         return expireMsecs;
@@ -63,6 +51,19 @@ public class RedisService {
     private volatile boolean locked = false;
 
 
+    public void set(final String key, final String value) {
+        Object obj = null;
+        try {
+            obj = redisTemplate.execute((RedisCallback<Object>) connection -> {
+                StringRedisSerializer serializer = new StringRedisSerializer();
+                connection.set(serializer.serialize(key), serializer.serialize(value));
+                connection.close();
+                return null;
+            });
+        } catch (Exception e) {
+            logger.error("set redis error, key : {}", key);
+        }
+    }
 
     public String get(final String key) {
         Object obj = null;
@@ -137,24 +138,25 @@ public class RedisService {
      * @return
      * @throws InterruptedException
      */
-    public synchronized boolean lock() throws InterruptedException {
+    public synchronized boolean lock(String lockKey) throws InterruptedException {
+        String key = "tspider" + lockKey;
         int timeout = timeoutMillis;
         while (timeout >= 0) {
             long expires = System.currentTimeMillis() + expireMsecs + 1;
             //锁到期时间
             String expiresStr = String.valueOf(expires);
-            if (this.setNX(lockKey, expiresStr)) {
+            if (this.setNX(key, expiresStr)) {
                 // lock acquired
                 locked = true;
                 return true;
             }
 
             //redis里的时间
-            String currentValueStr = this.get(lockKey);
+            String currentValueStr = this.get(key);
             if (currentValueStr != null && Long.parseLong(currentValueStr) < System.currentTimeMillis()) {
                 // lock is expired
 
-                String oldValueStr = this.getSet(lockKey, expiresStr);
+                String oldValueStr = this.getSet(key, expiresStr);
                 //只有一个线程才能获取上一个线上的设置时间，因为jedis.getSet是同步的
                 if (oldValueStr != null && oldValueStr.equals(currentValueStr)) {
                     //防止误删（覆盖，因为key是相同的）了他人的锁——这里达不到效果，这里值会被覆盖，但是因为什么相差了很少的时间，所以可以接受
@@ -177,9 +179,10 @@ public class RedisService {
     /**
      * Acquired lock release.
      */
-    public synchronized void unlock() {
+    public synchronized void unlock(String lockKey) {
         if (locked) {
-            this.delete(lockKey);
+            String key = "tspider" + lockKey;
+            this.delete(key);
             locked = false;
         }
     }

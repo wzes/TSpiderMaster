@@ -8,6 +8,16 @@ import java.util.List;
  * @date on 1/29/18
  */
 public class Task {
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * 爬取的 url 集合
      */
@@ -82,6 +92,7 @@ public class Task {
      * @param task
      */
     private Task(Task task) {
+        this.id = task.id;
         this.urls = task.urls;
         this.config = task.config;
         this.extractRules = task.extractRules;
@@ -152,6 +163,16 @@ public class Task {
          */
         public Builder type(PageType pageType) {
             task.pageType = pageType;
+            return this;
+        }
+
+        /**
+         * 配置页面类型
+         * @param pageType 页面类型
+         * @return This Task
+         */
+        public Builder id(String id) {
+            task.id = id;
             return this;
         }
 

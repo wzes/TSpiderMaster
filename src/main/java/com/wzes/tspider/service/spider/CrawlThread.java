@@ -56,7 +56,7 @@ public class CrawlThread implements Runnable {
         // 从仓库获取一条url
         String url;
 
-        while (!(url = UrlWarehouse.getInstance().getUrl()).isEmpty()) {
+        while (!(url = UrlWarehouse.getInstance().getUrl(task.getId())).isEmpty()) {
             //HtmlPage page = null;
             logger.info(Thread.currentThread() + " get page: " + url);
             String html = null;
