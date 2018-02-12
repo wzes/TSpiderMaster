@@ -7,10 +7,7 @@ import com.wzes.tspider.module.spider.Result;
 import com.wzes.tspider.module.spider.Task;
 import com.wzes.tspider.service.listener.OnCrawlListener;
 import com.wzes.tspider.service.spider.TSpiderProcessor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Create by xuantang
@@ -18,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class TaskController {
-    @GetMapping(value = "/task")
-    public BasicResponse<Result> build(@RequestParam("data") String data) {
+    @GetMapping(value = "/task/{id}")
+    public BasicResponse<Result> build(@PathVariable("id") String id, @RequestParam("data") String data) {
         BasicResponse<Result> response = new BasicResponse<>();
         Task rTask = JSON.parseObject(data, Task.class);
         for (int index = 0; index < rTask.getExtractRules().size(); index++) {

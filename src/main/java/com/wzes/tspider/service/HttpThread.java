@@ -21,10 +21,12 @@ import java.util.concurrent.CountDownLatch;
 public class HttpThread implements Runnable {
     private Result result;
     private String data;
+    private String id;
 
     private CountDownLatch countDownLatch;
 
-    public HttpThread(String data, CountDownLatch countDownLatch) {
+    public HttpThread(String id, String data, CountDownLatch countDownLatch) {
+        this.id = id;
         this.data = data;
         this.countDownLatch = countDownLatch;
     }
@@ -38,7 +40,7 @@ public class HttpThread implements Runnable {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         String encode = URLEncoder.encode(data);
         Request request = new Request.Builder()
-                .url("http://localhost:8080/task?data=" + encode)
+                .url("http://localhost:8080/task/" + id + "?data=" + encode)
                 .build();
         Call call = mOkHttpClient.newCall(request);
 

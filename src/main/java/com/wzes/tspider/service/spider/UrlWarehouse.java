@@ -1,5 +1,8 @@
 package com.wzes.tspider.service.spider;
 
+import com.wzes.tspider.service.redis.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +14,9 @@ public class UrlWarehouse {
     private List<String> urls;
     private int index;
     private static UrlWarehouse urlWarehouse;
+
+    @Autowired
+    RedisService redisService;
 
     private UrlWarehouse() {
 

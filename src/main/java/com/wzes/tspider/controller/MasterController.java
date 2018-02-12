@@ -13,6 +13,8 @@ import com.wzes.tspider.service.HttpThread;
 import com.wzes.tspider.service.listener.OnCrawlListener;
 import com.wzes.tspider.service.spider.CrawlThread;
 import com.wzes.tspider.service.spider.TSpiderProcessor;
+import com.wzes.tspider.service.spider.UrlWarehouse;
+import com.wzes.tspider.util.IdUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +39,13 @@ public class MasterController {
     public BasicResponse<Result> build(@RequestParam("data") String data) {
         BasicResponse<Result> res = new BasicResponse<>();
 
+        // get id
+        final String id = IdUtils.getUUID();
+        Task rTask = JSON.parseObject(data, Task.class);
+        List<String> urls = rTask.getUrls();
+        UrlWarehouse.getInstance().setUrls(urls);
+
+
         List<HttpThread> httpThreads = new ArrayList<>();
         int numOfThreads = 1;
         // 创建线程池
@@ -44,7 +53,7 @@ public class MasterController {
         final CountDownLatch countDown = new CountDownLatch(numOfThreads);
         for (int index = 0; index < numOfThreads; index++) {
             // 创建线程
-            HttpThread httpThread = new HttpThread(data, countDown);
+            HttpThread httpThread = new HttpThread(id, data, countDown);
             httpThreads.add(httpThread);
             executorService.execute(httpThread);
         }
