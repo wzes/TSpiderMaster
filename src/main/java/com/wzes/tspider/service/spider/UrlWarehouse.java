@@ -1,9 +1,11 @@
 package com.wzes.tspider.service.spider;
 
+import com.alibaba.fastjson.JSON;
 import com.wzes.tspider.service.redis.RedisService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wzes.tspider.util.SpringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,15 +13,18 @@ import java.util.List;
  * @date on 2/4/18
  */
 public class UrlWarehouse {
-    private List<String> urls;
-    private int index;
+
+    private static Logger logger = Logger.getLogger(UrlWarehouse.class);
+
     private static UrlWarehouse urlWarehouse;
 
-    @Autowired
-    RedisService redisService;
+    private ApplicationContext applicationContext;
+
+    private RedisService redisService;
 
     private UrlWarehouse() {
-
+        applicationContext = SpringUtils.getApplicationContext();
+        redisService = applicationContext.getBean(RedisService.class);
     }
 
     /**
@@ -38,50 +43,114 @@ public class UrlWarehouse {
         return urlWarehouse;
     }
 
-    public List<String> getUrls() {
-        return urls;
-    }
 
-    public void setUrls(List<String> urls) {
-        this.urls = urls;
+    public void setUrls(String id, List<String> urls) {
+        try {
+            if (redisService.lock(id)) {
+                // 设置 urls
+                Url[] spiderUrls = new Url[urls.size()];
+                for (int index = 0; index < urls.size(); index++) {
+                    Url url = new Url();
+                    url.setUrl(urls.get(index));
+                    url.setState(false);
+                    spiderUrls[index] = url;
+                }
+                String data = JSON.toJSONString(spiderUrls);
+                redisService.set(id, data);
+                // TODO
+                logger.info(data);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            redisService.unlock(id);
+        }
     }
 
     /**
-     * 添加 url
+     * 添加单个  url
      * @param url
      */
-    public void addUrl(String url) {
-        if (urls == null) {
-            this.urls = new ArrayList<>();
+    public void addUrl(String id, String url) {
+        try {
+            if (redisService.lock(id)) {
+                // 设置 urls
+                String data = redisService.get(id);
+                List<Url> spiderUrl = JSON.parseArray(data, Url.class);
+                Url urlTemp = new Url();
+                urlTemp.setUrl(url);
+                urlTemp.setState(false);
+                spiderUrl.add(urlTemp);
+                redisService.set(id, JSON.toJSONString(spiderUrl));
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            redisService.unlock(id);
         }
-        urls.add(url);
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public void clear() {
-        index = 0;
     }
 
     /**
      * 获取单个 url
      * @return url
      */
-    public synchronized String getUrl() {
-        if (urls != null) {
-            if (index < urls.size()) {
-                return urls.get(index++);
-            } else {
+    public synchronized String getUrl(String id) {
+        try {
+            if (redisService.lock(id)) {
+                String data = redisService.get(id);
+                // TODO
+                List<Url> urls = JSON.parseArray(data, Url.class);
+                for (int index = 0; index < urls.size(); index++) {
+                    if (!urls.get(index).isState()) {
+                        String url = urls.get(index).getUrl();
+                        logger.info("GET URL : " + url);
+                        urls.get(index).setState(true);
+                        redisService.delete(id);
+                        redisService.set(id, JSON.toJSONString(urls));
+                        return url;
+                    }
+                }
                 return "";
             }
-        } else {
-            throw new NullPointerException();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return "";
+        } finally {
+            redisService.unlock(id);
         }
+        return "";
     }
+
+//    class TSpiderUrl {
+//        List<Url> urls;
+//
+//        public void setUrls(List<Url> urls) {
+//            this.urls = urls;
+//        }
+//
+//        public List<Url> getUrls() {
+//            return urls;
+//        }
+//
+//        public TSpiderUrl() {
+//        }
+//
+//        public TSpiderUrl(List<String> urls) {
+//            for (String url : urls) {
+//                if (this.urls == null) {
+//                    this.urls = new ArrayList<>();
+//                }
+//                this.urls.add(new Url(url, true));
+//            }
+//        }
+//
+//        public String getUrl() {
+//            for (Url url : urls) {
+//                if (!url.state) {
+//                    return url.getUrl();
+//                }
+//            }
+//            return "";
+//        }
+//    }
 }

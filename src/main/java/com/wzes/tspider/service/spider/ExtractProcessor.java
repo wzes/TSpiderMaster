@@ -74,8 +74,6 @@ public class ExtractProcessor {
         for (int index = 0; index < results.length; index++) {
             results[index] = new Result();
         }
-        // 设置 url 仓库
-        UrlWarehouse.getInstance().setUrls(task.getUrls());
         // 线程数
         int numOfThreads = task.getNumThreads();
         // 创建线程池
@@ -96,8 +94,6 @@ public class ExtractProcessor {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // 清除
-        UrlWarehouse.getInstance().clear();
         // 合并结果
         mergeResult(crawlThreads, results);
 
