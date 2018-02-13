@@ -1,13 +1,13 @@
 package com.wzes.tspider.controller;
 
 import com.wzes.tspider.module.BasicResponse;
+import com.wzes.tspider.module.SpiderConfig;
 import com.wzes.tspider.module.spider.Result;
+import com.wzes.tspider.service.TaskConsumer;
 import com.wzes.tspider.service.task.TaskBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Create by xuantang
@@ -22,12 +22,14 @@ public class MasterController {
     @Autowired
     TaskBuilder taskBuilder;
 
-    @GetMapping(value = "/task")
-    public BasicResponse<Result> build(@RequestParam("data") String data) {
-        BasicResponse<Result> res = new BasicResponse<>();
+    @PostMapping(value = "/task")
+    public BasicResponse<String> build(@RequestBody SpiderConfig spiderConfig) {
+        BasicResponse<String> res = new BasicResponse<>();
         res.setCode(200);
         res.setMessage("success");
-        res.setContent(taskBuilder.build(data, workers).start().getResult());
+        System.out.println(spiderConfig.getData());
+        TaskBuilder taskBuilder = this.taskBuilder.build(spiderConfig.getData(), workers).start();
+        res.setContent(taskBuilder.getTask().getId());
         return res;
     }
 }

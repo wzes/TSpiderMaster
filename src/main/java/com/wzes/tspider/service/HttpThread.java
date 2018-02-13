@@ -2,10 +2,7 @@ package com.wzes.tspider.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import com.squareup.okhttp.*;
 import com.wzes.tspider.module.BasicResponse;
 import com.wzes.tspider.module.spider.Result;
 import com.wzes.tspider.module.spider.Task;
@@ -23,12 +20,9 @@ public class HttpThread implements Runnable {
     private String data;
     private String host;
 
-    private CountDownLatch countDownLatch;
-
-    public HttpThread(String host, String data, CountDownLatch countDownLatch) {
+    public HttpThread(String host, String data) {
         this.host = host;
         this.data = data;
-        this.countDownLatch = countDownLatch;
     }
 
     public Result getResult() {
@@ -39,19 +33,23 @@ public class HttpThread implements Runnable {
     public void run() {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         String encode = URLEncoder.encode(data);
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("data", data)
+                .build();
         Request request = new Request.Builder()
-                .url("http://" + host + "/task?data=" + encode)
+                .url("http://" + host + "/task")
+                .post(formBody)
                 .build();
         Call call = mOkHttpClient.newCall(request);
 
         try {
             Response response = call.execute();
-            BasicResponse basicResponse = JSON.parseObject(response.body().string(), BasicResponse.class);
-            JSONObject content = (JSONObject) basicResponse.getContent();
-            this.result = JSON.parseObject(content.toJSONString(), Result.class);
+//            BasicResponse basicResponse = JSON.parseObject(response.body().string(), BasicResponse.class);
+//            JSONObject content = (JSONObject) basicResponse.getContent();
+//            this.result = JSON.parseObject(content.toJSONString(), Result.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        countDownLatch.countDown();
+        //countDownLatch.countDown();
     }
 }

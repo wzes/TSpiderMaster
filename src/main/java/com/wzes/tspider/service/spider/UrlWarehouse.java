@@ -120,37 +120,4 @@ public class UrlWarehouse {
         }
         return "";
     }
-
-//    class TSpiderUrl {
-//        List<Url> urls;
-//
-//        public void setUrls(List<Url> urls) {
-//            this.urls = urls;
-//        }
-//
-//        public List<Url> getUrls() {
-//            return urls;
-//        }
-//
-//        public TSpiderUrl() {
-//        }
-//
-//        public TSpiderUrl(List<String> urls) {
-//            for (String url : urls) {
-//                if (this.urls == null) {
-//                    this.urls = new ArrayList<>();
-//                }
-//                this.urls.add(new Url(url, true));
-//            }
-//        }
-//
-//        public String getUrl() {
-//            for (Url url : urls) {
-//                if (!url.state) {
-//                    return url.getUrl();
-//                }
-//            }
-//            return "";
-//        }
-//    }
 }

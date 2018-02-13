@@ -25,6 +25,10 @@ public class TaskBuilder {
     private Result result;
     private Task task;
 
+    public Task getTask() {
+        return task;
+    }
+
     public Result getResult() {
         return result;
     }
@@ -33,27 +37,39 @@ public class TaskBuilder {
      * 开始
      */
     public TaskBuilder start() {
+//        List<HttpThread> httpThreads = new ArrayList<>();
+//        int numOfThreads = 2;
+//        // 创建线程池
+//        ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+//        final CountDownLatch countDown = new CountDownLatch(numOfThreads);
+//        for (int index = 0; index < numOfThreads; index++) {
+//            // 创建线程
+//            HttpThread httpThread = new HttpThread(hosts[index % hosts.length],
+//                    JSON.toJSONString(task), countDown);
+//            httpThreads.add(httpThread);
+//            executorService.execute(httpThread);
+//        }
+//        // 关闭线程池
+//        executorService.shutdown();
+//        try {
+//            countDown.await();
+//        } catch (InterruptedException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        result = mergeResult(httpThreads);
         List<HttpThread> httpThreads = new ArrayList<>();
         int numOfThreads = 2;
         // 创建线程池
         ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
-        final CountDownLatch countDown = new CountDownLatch(numOfThreads);
+        //final CountDownLatch countDown = new CountDownLatch(numOfThreads);
         for (int index = 0; index < numOfThreads; index++) {
             // 创建线程
             HttpThread httpThread = new HttpThread(hosts[index % hosts.length],
-                    JSON.toJSONString(task), countDown);
+                    JSON.toJSONString(task));
             httpThreads.add(httpThread);
             executorService.execute(httpThread);
         }
-        // 关闭线程池
-        executorService.shutdown();
-        try {
-            countDown.await();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        result = mergeResult(httpThreads);
         return this;
     }
 
