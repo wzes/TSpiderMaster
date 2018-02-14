@@ -15,8 +15,123 @@ import java.util.List;
  * @date on 2/3/18
  */
 public class CommonSpiderTests {
+
     @Test
     public void SseTest() {
+        Task.Builder builder = new Task.Builder();
+        // --------------------------------------------------------------------//
+        // item title
+        ExtractItem item = new ExtractItem();
+        item.setName("title");
+        item.setExtractType(ExtractType.EXTRACT_TEXT);
+        List<String> XPaths = new ArrayList<>();
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[1]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[2]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[3]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[4]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[5]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[6]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/a");
+        XPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/a");
+        item.setXpaths(XPaths);
+        // item title link
+        ExtractItem itemLink = new ExtractItem();
+        itemLink.setName("title_link");
+        itemLink.setExtractType(ExtractType.EXTRACT_LINK);
+        itemLink.setXpaths(XPaths);
+
+        ExtractItem itemTime = new ExtractItem();
+        itemTime.setExtractType(ExtractType.EXTRACT_TEXT);
+        List<String> timeXPaths = new ArrayList<>();
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[1]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[2]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[3]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[4]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[5]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[6]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[7]/span");
+        timeXPaths.add("/html/body/div[3]/div/div[3]/div/ul/li[8]/span");
+        itemTime.setXpaths(timeXPaths);
+        itemTime.setName("date");
+
+        List<ExtractItem> items = new ArrayList<>();
+        items.add(item);
+        items.add(itemLink);
+        items.add(itemTime);
+        // --------------------------------------------------------------------//
+        // extractRule
+        ExtractRule extractRule = new ExtractRule();
+        extractRule.setExtractItems(items);
+        // listener
+        extractRule.setOnCrawlListener(new OnCrawlListener() {
+            @Override
+            public void onNext(Result result) {
+                result.show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        // --------------------------------------------------------------------//
+        // config
+        Config config = new Config();
+        config.setTimeout(10000);
+        Task task = builder.url("http://sse.tongji.edu.cn/Data/List/xyxw")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=2")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=3")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=4")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=5")
+                .url("http://sse.tongji.edu.cn/Data/List/xyxw?page=6")
+                .type(PageType.PAGE_COMMON)
+                .config(config)
+                .rule(extractRule)
+                .numThreads(4)
+                .build();
+
+
+        String data = JSON.toJSONString(task);
+        SpiderConfig spiderConfig = new SpiderConfig();
+        spiderConfig.setData(data);
+        System.out.println(JSON.toJSONString(spiderConfig));
+        Task rTask = JSON.parseObject(data, Task.class);
+
+        for (int index = 0; index < rTask.getExtractRules().size(); index++) {
+            rTask.getExtractRules().get(index).setOnCrawlListener(new OnCrawlListener() {
+                @Override
+                public void onNext(Result result) {
+                    result.show();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    System.out.println(e.getMessage());
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
+        }
+
+        //System.out.println(rTask.getNumThreads());
+        // --------------------------------------------------------------------//
+        // start
+//        TSpiderProcessor.Builder builder1 = new TSpiderProcessor.Builder();
+//        builder1.task(task)
+//                .build()
+//                .start();
+    }
+
+    @Test
+    public void BaiduTest() {
         Task.Builder builder = new Task.Builder();
         // --------------------------------------------------------------------//
         // item title
@@ -58,6 +173,7 @@ public class CommonSpiderTests {
         timeXPaths.add("//*[@id=\"10\"]/div/p");
         timeXPaths.add("//*[@id=\"11\"]/div/p");
         timeXPaths.add("//*[@id=\"12\"]/div/p");
+        timeXPaths.add("//*[@id=\"8\"]/div/p");
         itemTime.setXpaths(timeXPaths);
         itemTime.setName("date");
 
@@ -109,6 +225,139 @@ public class CommonSpiderTests {
         System.out.println(JSON.toJSONString(spiderConfig));
         Task rTask = JSON.parseObject(data, Task.class);
 
+
+        for (int index = 0; index < rTask.getExtractRules().size(); index++) {
+            rTask.getExtractRules().get(index).setOnCrawlListener(new OnCrawlListener() {
+                @Override
+                public void onNext(Result result) {
+                    result.show();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    System.out.println(e.getMessage());
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
+        }
+
+        //System.out.println(rTask.getNumThreads());
+        // --------------------------------------------------------------------//
+        // start
+//        TSpiderProcessor.Builder builder1 = new TSpiderProcessor.Builder();
+//        builder1.task(task)
+//                .build()
+//                .start();
+    }
+
+
+    @Test
+    public void SinaTest() {
+        Task.Builder builder = new Task.Builder();
+        // --------------------------------------------------------------------//
+        // item title
+        ExtractItem item = new ExtractItem();
+        item.setName("title");
+        item.setExtractType(ExtractType.EXTRACT_TEXT);
+        List<String> XPaths = new ArrayList<>();
+        XPaths.add("//*[@id=\"result\"]/div[1]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[2]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[3]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[4]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[5]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[6]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[7]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[8]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[9]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[10]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[11]/div/h2/a");
+        XPaths.add("//*[@id=\"result\"]/div[12]/div/h2/a");
+        item.setXpaths(XPaths);
+        // item title link
+        ExtractItem itemLink = new ExtractItem();
+        itemLink.setName("title_link");
+        itemLink.setExtractType(ExtractType.EXTRACT_LINK);
+        itemLink.setXpaths(XPaths);
+
+        ExtractItem itemTime = new ExtractItem();
+        itemTime.setExtractType(ExtractType.EXTRACT_TEXT);
+        List<String> timeXPaths = new ArrayList<>();
+        timeXPaths.add("//*[@id=\"result\"]/div[1]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[2]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[3]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[4]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[5]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[6]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[7]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[8]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[9]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[10]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[11]/div/h2/span");
+        timeXPaths.add("//*[@id=\"result\"]/div[12]/div/h2/span");
+        itemTime.setXpaths(timeXPaths);
+        itemTime.setName("date");
+
+        List<ExtractItem> items = new ArrayList<>();
+        items.add(item);
+        items.add(itemLink);
+        items.add(itemTime);
+        // --------------------------------------------------------------------//
+        // extractRule
+        ExtractRule extractRule = new ExtractRule();
+        extractRule.setExtractItems(items);
+        // listener
+        extractRule.setOnCrawlListener(new OnCrawlListener() {
+            @Override
+            public void onNext(Result result) {
+                result.show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        // --------------------------------------------------------------------//
+        // config
+        Config config = new Config();
+        config.setTimeout(10000);
+        Task task = builder.url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=1&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=2&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=3&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=4&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=5&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=6&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=7&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=8&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=9&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=10&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=11&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=12&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=13&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=14&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=15&pf=2131425468&ps=2134309112&dpc=1")
+                .url("http://search.sina.com.cn/?q=李琰&c=news&from=channel&ie=utf-8&col=&range=&source=&country=&size=&time=&a=&page=16&pf=2131425468&ps=2134309112&dpc=1")
+                .type(PageType.PAGE_COMMON)
+                .config(config)
+                .rule(extractRule)
+                .numThreads(4)
+                .build();
+
+
+        String data = JSON.toJSONString(task);
+        SpiderConfig spiderConfig = new SpiderConfig();
+        spiderConfig.setData(data);
+        System.out.println(JSON.toJSONString(spiderConfig));
+        Task rTask = JSON.parseObject(data, Task.class);
 
         for (int index = 0; index < rTask.getExtractRules().size(); index++) {
             rTask.getExtractRules().get(index).setOnCrawlListener(new OnCrawlListener() {
