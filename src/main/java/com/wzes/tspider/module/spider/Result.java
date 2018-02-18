@@ -27,6 +27,25 @@ public class Result {
         return storageType;
     }
 
+    private String id;
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setStorageType(StorageType storageType) {
         this.storageType = storageType;
     }
@@ -117,36 +136,73 @@ public class Result {
      * 表格显示结果
      */
     public void show() {
+        System.out.println(getOutputString());
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getOutputString() {
+        return getOutputString(false);
+    }
+
+    /**
+     *
+     * @param append
+     * @return
+     */
+    public String getOutputString(boolean append) {
+        StringBuilder sb = new StringBuilder();
         if (items == null) {
-            return;
+            return null;
         }
         int size = items.size();
         String[] names = new String[items.size()];
         int max = 0;
-        // 初始化
-        for (int index = 0; index < size; index++) {
-            names[index] = items.get(index).getName();
-            if (max < items.get(index).getValues().size()) {
-                max = items.get(index).getValues().size();
+        if (!append) {
+            // 初始化
+            for (int index = 0; index < size; index++) {
+                names[index] = items.get(index).getName();
+                if (max < items.get(index).getValues().size()) {
+                    max = items.get(index).getValues().size();
+                }
             }
-        }
-        // 输出标题
-        for (int index = 0; index < size; index++ ) {
-            if (index == size - 1) {
-                System.out.print(names[index] + SPLIT_LINE);
-            } else {
-                System.out.print(names[index] + SPLIT_ITEM);
-            }
+            // 输出标题
+//            for (int index = 0; index < size; index++ ) {
+//                if (index == size - 1) {
+//                    sb.append(names[index]).append(SPLIT_LINE);
+//                } else {
+//                    sb.append(names[index]).append(SPLIT_ITEM);
+//                }
+//            }
         }
         // 输出内容
         for (int index = 0; index < max; index++ ) {
+            int nullSize = 0;
+            StringBuilder tmp = new StringBuilder();
             for (int j = 0; j < items.size(); j++ ) {
                 if (j == items.size() - 1) {
-                    System.out.print(items.get(j).getValues().get(index) + SPLIT_LINE);
+                    // all is not null
+                    // System.out.println(nullSize + " " + items.size());
+                    if (items.get(j).getValues().get(index).equals(Constant.RESULT_NULL_SYMBOL)) {
+                        if (nullSize == items.size() - 1) {
+
+                        } else {
+                            sb.append(tmp).append(Constant.RESULT_NULL_SYMBOL).append(SPLIT_LINE);
+                        }
+                    } else {
+                        sb.append(tmp);
+                        sb.append(items.get(j).getValues().get(index)).append(SPLIT_LINE);
+                    }
                 } else {
-                    System.out.print(items.get(j).getValues().get(index) + SPLIT_ITEM);
+                    if (items.get(j).getValues().get(index).equals(Constant.RESULT_NULL_SYMBOL)) {
+                        nullSize++;
+                    }
+                    tmp.append(items.get(j).getValues().get(index)).append(SPLIT_ITEM);
                 }
             }
         }
+        return sb.toString();
     }
 }

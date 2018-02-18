@@ -386,4 +386,86 @@ public class CommonSpiderTests {
 //                .build()
 //                .start();
     }
+
+    @Test
+    public void ZhihuTest() {
+        Task.Builder builder = new Task.Builder();
+        // item title
+        ExtractItem item = new ExtractItem();
+        item.setName("title");
+        item.setExtractType(ExtractType.EXTRACT_TEXT);
+        item.setSelector("body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a");
+        // item title link
+        ExtractItem itemLink = new ExtractItem();
+        itemLink.setName("title_link");
+        itemLink.setExtractType(ExtractType.EXTRACT_LINK);
+        itemLink.setSelector(item.getSelector());
+
+        ExtractItem itemImg = new ExtractItem();
+        itemImg.setExtractType(ExtractType.EXTRACT_IMAGE);
+
+        itemImg.setSelector("body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a > img");
+        itemImg.setName("img");
+
+        List<ExtractItem> items = new ArrayList<>();
+        items.add(item);
+        items.add(itemLink);
+        items.add(itemImg);
+
+        // extractRule
+        ExtractRule extractRule = new ExtractRule();
+        extractRule.setExtractItems(items);
+        // listener
+        extractRule.setOnCrawlListener(new OnCrawlListener() {
+            @Override
+            public void onNext(Result result) {
+                result.show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        // --------------------------------------------------------------------//
+        // config
+        Config config = new Config();
+        config.setTimeout(10000);
+        Task task = builder.url("http://daily.zhihu.com/")
+                .config(config)
+                .rule(extractRule)
+                .numThreads(1)
+                .build();
+
+
+        String data = JSON.toJSONString(task);
+        SpiderConfig spiderConfig = new SpiderConfig();
+        spiderConfig.setData(data);
+        System.out.println(JSON.toJSONString(spiderConfig));
+        Task rTask = JSON.parseObject(data, Task.class);
+
+        for (int index = 0; index < rTask.getExtractRules().size(); index++) {
+            rTask.getExtractRules().get(index).setOnCrawlListener(new OnCrawlListener() {
+                @Override
+                public void onNext(Result result) {
+                    result.show();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    System.out.println(e.getMessage());
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
+        }
+    }
 }

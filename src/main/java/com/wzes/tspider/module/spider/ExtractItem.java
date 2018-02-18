@@ -15,6 +15,17 @@ public class ExtractItem {
      * 选取位置集合
      */
     private List<String> xpaths;
+
+    private String selector;
+
+    public String getSelector() {
+        return selector;
+    }
+
+    public void setSelector(String selector) {
+        this.selector = selector;
+    }
+
     /**
      * 爬取的内容类型
      */

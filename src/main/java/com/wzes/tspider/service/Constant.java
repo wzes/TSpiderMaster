@@ -8,9 +8,11 @@ public class Constant {
     /**
      *
      */
-    public static final String RESULT_ITEM_SPLIT_SYMBOL = " ";
+    public static final String RESULT_ITEM_SPLIT_SYMBOL = ",";
     /**
      *
      */
     public static final String RESULT_LINE_SPLIT_SYMBOL = "\n";
+
+    public static final String RESULT_NULL_SYMBOL = "-";
 }
