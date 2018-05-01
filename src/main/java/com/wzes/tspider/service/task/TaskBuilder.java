@@ -7,6 +7,7 @@ import com.wzes.tspider.service.HttpThread;
 import com.wzes.tspider.service.spider.UrlWarehouse;
 import com.wzes.tspider.util.IdUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class TaskBuilder {
         // 创建线程池
         ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
         //final CountDownLatch countDown = new CountDownLatch(numOfThreads);
-        for (int index = 0; index < numOfThreads; index++) {
+        for (int index = 0; index < hosts.length; index++) {
             // 创建线程
             HttpThread httpThread = new HttpThread(hosts[index % hosts.length],
                     JSON.toJSONString(task));

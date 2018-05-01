@@ -120,4 +120,27 @@ public class UrlWarehouse {
         }
         return "";
     }
+
+    public float getProgress(String id) {
+        try {
+            String data = redisService.get(id);
+            // TODO
+            List<Url> urls = JSON.parseArray(data, Url.class);
+            int total = urls.size();
+            int crawled = 0;
+            int success = 0;
+            for (Url url : urls) {
+                if (url.isState()) {
+                    if (url.getCode() == 200) {
+                        success++;
+                    }
+                    crawled++;
+                }
+            }
+            return crawled / total;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

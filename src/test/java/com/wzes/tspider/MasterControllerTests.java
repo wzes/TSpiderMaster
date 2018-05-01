@@ -1,17 +1,9 @@
 package com.wzes.tspider;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.wzes.tspider.module.BasicResponse;
-import com.wzes.tspider.module.spider.Result;
+import com.squareup.okhttp.*;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 
 /**
  * @author Create by xuantang
@@ -20,10 +12,16 @@ import java.net.URLEncoder;
 public class MasterControllerTests {
     @Test
     public void masterTest() {
-        String encode = URLEncoder.encode("{\"config\":{\"timeout\":10000},\"extractRules\":[{\"extractItems\":[{\"extractType\":\"EXTRACT_TEXT\",\"name\":\"title\",\"xpaths\":[\"/html/body/div[3]/div/div[3]/div/ul/li[1]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[2]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[3]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[4]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[5]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[6]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[7]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[8]/a\"]},{\"extractType\":\"EXTRACT_LINK\",\"name\":\"title_link\",\"xpaths\":[\"/html/body/div[3]/div/div[3]/div/ul/li[1]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[2]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[3]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[4]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[5]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[6]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[7]/a\",\"/html/body/div[3]/div/div[3]/div/ul/li[8]/a\"]},{\"extractType\":\"EXTRACT_TEXT\",\"name\":\"date\",\"xpaths\":[\"/html/body/div[3]/div/div[3]/div/ul/li[1]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[2]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[3]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[4]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[5]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[6]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[7]/span\",\"/html/body/div[3]/div/div[3]/div/ul/li[8]/span\"]}],\"onCrawlListener\":{}}],\"numThreads\":4,\"pageType\":\"PAGE_COMMON\",\"urls\":[\"http://sse.tongji.edu.cn/Data/List/xyxw\",\"http://sse.tongji.edu.cn/Data/List/xyxw?page=2\",\"http://sse.tongji.edu.cn/Data/List/xyxw?page=3\",\"http://sse.tongji.edu.cn/Data/List/xyxw?page=4\",\"http://sse.tongji.edu.cn/Data/List/xyxw?page=5\",\"http://sse.tongji.edu.cn/Data/List/xyxw?page=6\"]}");
+        String data = "{\"data\":\"{\\\"config\\\":{\\\"timeout\\\":10000},\\\"extractRules\\\":[{\\\"extractItems\\\":[{\\\"extractType\\\":\\\"EXTRACT_TEXT\\\",\\\"name\\\":\\\"title\\\",\\\"selector\\\":\\\"body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a\\\"},{\\\"extractType\\\":\\\"EXTRACT_LINK\\\",\\\"name\\\":\\\"title_link\\\",\\\"selector\\\":\\\"body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a\\\"},{\\\"extractType\\\":\\\"EXTRACT_IMAGE\\\",\\\"name\\\":\\\"img\\\",\\\"selector\\\":\\\"body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a > img\\\"}],\\\"onCrawlListener\\\":{}}],\\\"numThreads\\\":1,\\\"pageType\\\":\\\"PAGE_COMMON\\\",\\\"urls\\\":[\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\"]}\"}";
+
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(JSON, data);
+
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("http://localhost:8080/master/task?data=" + encode)
+                .url("http://localhost:8080/task")
+                .post(body)
                 .build();
         Call call = mOkHttpClient.newCall(request);
 

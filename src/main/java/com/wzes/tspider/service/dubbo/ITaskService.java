@@ -1,4 +1,4 @@
-package com.wzes.tspider.service;
+package com.wzes.tspider.service.dubbo;
 
 import com.wzes.tspider.module.BasicResponse;
 import com.wzes.tspider.module.spider.Result;

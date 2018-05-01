@@ -1,6 +1,5 @@
-package com.wzes.tspider.service;
+package com.wzes.tspider.service.dubbo;
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.wzes.tspider.module.BasicResponse;
 import com.wzes.tspider.module.spider.Result;
 import org.springframework.stereotype.Component;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskConsumer {
 
-    @Reference
     ITaskService iTaskService;
 
     /**

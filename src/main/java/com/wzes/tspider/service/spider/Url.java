@@ -7,6 +7,7 @@ package com.wzes.tspider.service.spider;
 public class Url {
     private String url;
     private boolean state;
+    private int code;
 
     public String getUrl() {
         return url;
@@ -22,5 +23,13 @@ public class Url {
 
     public void setState(boolean state) {
         this.state = state;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

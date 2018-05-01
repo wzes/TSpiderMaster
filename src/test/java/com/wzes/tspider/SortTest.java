@@ -2,6 +2,8 @@ package com.wzes.tspider;
 
 import org.junit.Test;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * @author Create by xuantang
  * @date on 2/17/18
@@ -9,8 +11,21 @@ import org.junit.Test;
 public class SortTest {
     @Test
     public void SortTests() {
-        System.out.println(6 & 1);
-        System.out.println(minRunLength(33));
+        final Counter counter = new Counter();
+        for (int i = 0; i < 10000; i++) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    counter.inc();
+                }
+            }).start();
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(counter);
     }
 
     private static int minRunLength(int n) {
@@ -22,4 +37,23 @@ public class SortTest {
         }
         return n + r;
     }
+
+    class Counter {
+        private volatile int count = 0;
+        public void inc() {
+            try {
+                Thread.sleep(3);
+                System.out.println(Thread.currentThread());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            count++;
+        }
+
+        @Override
+        public String toString() {
+            return "[count=" + count + "]";
+        }
+    }
+
 }

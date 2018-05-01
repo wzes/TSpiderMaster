@@ -2,19 +2,13 @@ package com.wzes.tspider.controller;
 
 import com.wzes.tspider.module.BasicResponse;
 import com.wzes.tspider.module.SpiderConfig;
-import com.wzes.tspider.module.spider.Result;
-import com.wzes.tspider.service.TaskConsumer;
-import com.wzes.tspider.service.store.HdfsUtils;
+import com.wzes.tspider.service.store.HdfsService;
 import com.wzes.tspider.service.task.TaskBuilder;
-import org.apache.hadoop.fs.Hdfs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -28,11 +22,16 @@ public class MasterController {
     @Value("${workers.address}")
     private String workers;
 
+
+
     @Value("${hdfs.address}")
     private String hdfs;
 
     @Autowired
     TaskBuilder taskBuilder;
+
+    @Autowired
+    HdfsService hdfsService;
 
     @PostMapping(value = "/task")
     public BasicResponse<String> build(@RequestBody SpiderConfig spiderConfig) {
@@ -53,7 +52,7 @@ public class MasterController {
     @GetMapping(value = "task/result/{id}", produces = "application/force-download")
     public void downloadConfigJsonFile(@PathVariable("id") String id,
                                        HttpServletResponse httpServletResponse) {
-        String content = HdfsUtils.getFile(id);
+        String content = hdfsService.getFile(id);
 
         String fileName = id + ".txt";
         httpServletResponse.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");

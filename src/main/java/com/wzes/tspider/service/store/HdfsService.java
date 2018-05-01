@@ -3,6 +3,9 @@ package com.wzes.tspider.service.store;
 import com.wzes.tspider.module.spider.Result;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,16 +15,18 @@ import java.util.Arrays;
  * @author Create by xuantang
  * @date on 2/13/18
  */
-public class HdfsUtils {
+@Component
+public class HdfsService {
 
-    private static final String dir = "hdfs://192.168.1.59:9000/tspider/";
+    @Value("${hdfs.address}")
+    private String dir;
 
     /**
      *
      * @param id
      * @return
      */
-    public static String getFile(String id) {
+    public String getFile(String id) {
         if (!exists(id)) {
             merge(id);
         }
@@ -33,7 +38,7 @@ public class HdfsUtils {
      * @param id
      * @return
      */
-    public static String getContent(String id) {
+    public String getContent(String id) {
         Configuration config = new Configuration();
         config.set("fs.hdfs.impl",
                 org.apache.hadoop.hdfs.DistributedFileSystem.class.getName()
@@ -59,7 +64,7 @@ public class HdfsUtils {
         return null;
     }
 
-    public static boolean exists(String id) {
+    public boolean exists(String id) {
         // get config
         Configuration config = new Configuration();
         config.set("fs.hdfs.impl",
@@ -83,7 +88,7 @@ public class HdfsUtils {
      * Merge files
      * @param dir
      */
-    public static void merge(String id) {
+    public void merge(String id) {
         // get config
         Configuration config = new Configuration();
         config.set("fs.hdfs.impl",
