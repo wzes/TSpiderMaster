@@ -62,12 +62,13 @@ public class TaskController {
             if (!"tspider".equals(token)) {
                 return new BasicResponse<>(403, "forbidden");
             }
-            taskService.addTask(token, taskBuilder.getTask().getId());
             System.out.println(spiderConfig.getData());
             taskBuilder.build(spiderConfig.getData(), workers).start();
+            taskService.addTask(token, taskBuilder.getTask().getId());
             return new BasicResponse<>(200, "success",
                     taskBuilder.getTask().getId());
         } catch (Exception e) {
+            e.printStackTrace();
             return new BasicResponse<>(404, "error");
         }
     }

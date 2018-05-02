@@ -20,7 +20,7 @@ public class TaskControllerTests {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("http://localhost:8080/task")
+                .url("http://localhost:8088/task/build?token=tspider")
                 .post(body)
                 .build();
         Call call = mOkHttpClient.newCall(request);
