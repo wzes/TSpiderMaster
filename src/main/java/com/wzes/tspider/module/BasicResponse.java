@@ -13,6 +13,21 @@ public class BasicResponse<T> {
     private String message;
     private T content;
 
+    public BasicResponse(int code) {
+        this.code = code;
+    }
+
+    public BasicResponse(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public BasicResponse(int code, String message, T content) {
+        this.code = code;
+        this.message = message;
+        this.content = content;
+    }
+
     public T getContent() {
         return content;
     }

@@ -9,7 +9,7 @@ import java.io.IOException;
  * @author Create by xuantang
  * @date on 2/5/18
  */
-public class MasterControllerTests {
+public class TaskControllerTests {
     @Test
     public void masterTest() {
         String data = "{\"data\":\"{\\\"config\\\":{\\\"timeout\\\":10000},\\\"extractRules\\\":[{\\\"extractItems\\\":[{\\\"extractType\\\":\\\"EXTRACT_TEXT\\\",\\\"name\\\":\\\"title\\\",\\\"selector\\\":\\\"body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a\\\"},{\\\"extractType\\\":\\\"EXTRACT_LINK\\\",\\\"name\\\":\\\"title_link\\\",\\\"selector\\\":\\\"body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a\\\"},{\\\"extractType\\\":\\\"EXTRACT_IMAGE\\\",\\\"name\\\":\\\"img\\\",\\\"selector\\\":\\\"body > div.main-content > div > div.main-content-wrap > div > div:nth-child(1) > div:nth-child(3) > div > a > img\\\"}],\\\"onCrawlListener\\\":{}}],\\\"numThreads\\\":1,\\\"pageType\\\":\\\"PAGE_COMMON\\\",\\\"urls\\\":[\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\",\\\"http://daily.zhihu.com/\\\"]}\"}";

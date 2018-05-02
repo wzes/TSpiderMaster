@@ -16,7 +16,6 @@ public class TSpiderApplicationMaster {
 //	}
 	public static void main(String[] args) {
 		SpringApplication.run(TSpiderApplicationMaster.class, args);
-		String serverAddress = "127.0.0.1:18866";
 
 	}
 }
