@@ -1,10 +1,10 @@
-package com.wzes.tspider.service.spider;
+package com.wzes.tspider.module;
 
 /**
  * @author Create by xuantang
  * @date on 2/12/18
  */
-public class Url {
+public class UrlState {
     private String url;
     private boolean state;
     private int code;

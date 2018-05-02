@@ -63,6 +63,8 @@ public class TaskBuilder {
         int numOfThreads = 2;
         // 创建线程池
         ExecutorService executorService = Executors.newFixedThreadPool(numOfThreads);
+        // clear the urls
+        task.setUrls(null);
         //final CountDownLatch countDown = new CountDownLatch(numOfThreads);
         for (int index = 0; index < hosts.length; index++) {
             // 创建线程

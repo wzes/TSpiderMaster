@@ -1,9 +1,13 @@
 package com.wzes.tspider.controller;
 
 import com.wzes.tspider.module.BasicResponse;
+import com.wzes.tspider.module.Progress;
 import com.wzes.tspider.module.SpiderConfig;
+import com.wzes.tspider.module.UrlState;
+import com.wzes.tspider.service.redis.RedisService;
 import com.wzes.tspider.service.store.HdfsService;
 import com.wzes.tspider.service.task.TaskBuilder;
+import com.wzes.tspider.service.task.TaskProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * @author Create by xuantang
@@ -22,6 +27,8 @@ public class MasterController {
     @Value("${workers.address}")
     private String workers;
 
+    @Autowired
+    TaskProgressService taskProgressService;
 
 
     @Value("${hdfs.address}")
@@ -32,6 +39,9 @@ public class MasterController {
 
     @Autowired
     HdfsService hdfsService;
+
+    @Autowired
+    RedisService redisService;
 
     @PostMapping(value = "/task")
     public BasicResponse<String> build(@RequestBody SpiderConfig spiderConfig) {
@@ -65,5 +75,33 @@ public class MasterController {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+    }
+
+    @GetMapping(value = "/task/progress/{id}")
+    public BasicResponse<Progress> viewProgress(@PathVariable("id") String id) {
+        BasicResponse<Progress> res = new BasicResponse<>();
+        try {
+            res.setContent(taskProgressService.getProgress(id));
+            res.setCode(200);
+            res.setMessage("success");
+        } catch (Exception e) {
+            res.setCode(404);
+            res.setMessage("error");
+        }
+        return res;
+    }
+
+    @GetMapping(value = "/task/detail/{id}")
+    public BasicResponse<List<UrlState>> viewDetail(@PathVariable("id") String id) {
+        BasicResponse<List<UrlState>> res = new BasicResponse<>();
+        try {
+            res.setContent(taskProgressService.getDetailUrlStates(id));
+            res.setCode(200);
+            res.setMessage("success");
+        } catch (Exception e) {
+            res.setCode(404);
+            res.setMessage("error");
+        }
+        return res;
     }
 }

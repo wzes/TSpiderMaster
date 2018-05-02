@@ -15,4 +15,6 @@ public class Constant {
     public static final String RESULT_LINE_SPLIT_SYMBOL = "\n";
 
     public static final String RESULT_NULL_SYMBOL = "-";
+
+    public static final String KEY_RESULT_BACK = "_res";
 }

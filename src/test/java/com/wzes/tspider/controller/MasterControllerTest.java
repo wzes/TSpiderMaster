@@ -50,4 +50,30 @@ public class MasterControllerTest {
     @Test
     public void downloadConfigJsonFile() {
     }
+
+    @Test
+    public void viewProgress() {
+        try {
+            MvcResult mvcResult = mockMvc.perform(get("/task/progress/7f0b560ee6254afb8301f3fe02a94cf2"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                    .andReturn();
+            System.out.println(mvcResult.getResponse().getContentAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void viewDetail() {
+        try {
+            MvcResult mvcResult = mockMvc.perform(get("/task/detail/7f0b560ee6254afb8301f3fe02a94cf2"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                    .andReturn();
+            System.out.println(mvcResult.getResponse().getContentAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
