@@ -29,10 +29,8 @@ public class TaskProgressService {
             int success = 0;
             for (String s : datas) {
                 UrlState urlState = JSON.parseObject(s, UrlState.class);
-                if (urlState.isState()) {
-                    if (urlState.getCode() == 200) {
-                        success++;
-                    }
+                if (urlState.getCode() == 200) {
+                    success++;
                 }
             }
             return new Progress(total, crawled, success);
@@ -45,9 +43,17 @@ public class TaskProgressService {
     public List<UrlState> getDetailUrlStates(String id) {
         List<UrlState> urlStates = new ArrayList<>();
         try {
-            List<String> urls = redisService.lrange(id + Constant.KEY_RESULT_BACK);
-            for (String state : urls) {
+            List<String> fUrls = redisService.lrange(id + Constant.KEY_RESULT_BACK);
+            List<String> nUrls = redisService.lrange(id);
+            for (String state : fUrls) {
                 UrlState urlState = JSON.parseObject(state, UrlState.class);
+                urlStates.add(urlState);
+            }
+            for (String state : nUrls) {
+                UrlState urlState = new UrlState();
+                urlState.setUrl(state);
+                urlState.setCode(-1);
+                urlState.setState("not started");
                 urlStates.add(urlState);
             }
         } catch (Exception e) {

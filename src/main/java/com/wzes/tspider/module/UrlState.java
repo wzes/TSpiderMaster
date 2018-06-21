@@ -6,7 +6,7 @@ package com.wzes.tspider.module;
  */
 public class UrlState {
     private String url;
-    private boolean state;
+    private String state;
     private int code;
 
     public String getUrl() {
@@ -17,11 +17,11 @@ public class UrlState {
         this.url = url;
     }
 
-    public boolean isState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(boolean state) {
+    public void setState(String state) {
         this.state = state;
     }
 

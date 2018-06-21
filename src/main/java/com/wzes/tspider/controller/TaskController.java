@@ -64,9 +64,13 @@ public class TaskController {
             }
             System.out.println(spiderConfig.getData());
             taskBuilder.build(spiderConfig.getData(), workers).start();
-            taskService.addTask(token, taskBuilder.getTask().getId());
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < taskBuilder.getTask().getExtractRules().size(); i++) {
+                taskService.addTask(token, taskBuilder.getTask().getId());
+                sb.append(taskBuilder.getTask().getId()).append(",");
+            }
             return new BasicResponse<>(200, "success",
-                    taskBuilder.getTask().getId());
+                    sb.toString().substring(0, sb.toString().length() - 1));
         } catch (Exception e) {
             e.printStackTrace();
             return new BasicResponse<>(404, "error");
@@ -92,7 +96,7 @@ public class TaskController {
             }
             return;
         }
-        if (id == null || id.isEmpty() || id.equals("{id}")) {
+        if (id == null || id.isEmpty()) {
             try {
                 httpServletResponse.sendError(404, "id is null");
             } catch (IOException e) {
@@ -101,8 +105,8 @@ public class TaskController {
             return;
         }
         try {
-            String content = hdfsService.getFile(id);
-            String fileName = id + ".txt";
+            String content = hdfsService.getFile(id + "_0");
+            String fileName = id + ".csv";
             httpServletResponse.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             httpServletResponse.setHeader("Content-type", "text/html;charset=UTF-8");
             httpServletResponse.setCharacterEncoding("UTF-8");

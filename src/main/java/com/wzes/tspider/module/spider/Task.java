@@ -10,6 +10,8 @@ import java.util.List;
 public class Task {
     private String id;
 
+    private String name;
+
     public String getId() {
         return id;
     }
@@ -117,6 +119,11 @@ public class Task {
          */
         public Builder urls(List<String> urls) {
             task.urls = urls;
+            return this;
+        }
+
+        public Builder name(String name) {
+            task.name = name;
             return this;
         }
 

@@ -555,6 +555,7 @@ public class CommonSpiderTests {
                 .url("http://sse.tongji.edu.cn/data/list/xwdt?page=16")
                 .url("http://sse.tongji.edu.cn/data/list/xwdt?page=17")
                 .url("http://sse.tongji.edu.cn/data/list/xwdt?page=18")
+                .name("SSE Spider")
                 .config(config)
                 .rule(extractRule)
                 .numThreads(1)
@@ -564,6 +565,7 @@ public class CommonSpiderTests {
         String data = JSON.toJSONString(task);
         SpiderConfig spiderConfig = new SpiderConfig();
         spiderConfig.setData(data);
+        System.out.println(data);
         System.out.println(JSON.toJSONString(spiderConfig));
         Task rTask = JSON.parseObject(data, Task.class);
 
