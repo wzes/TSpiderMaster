@@ -22,7 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Create by xuantang
@@ -32,8 +35,8 @@ import java.util.List;
 @RestController
 public class TaskController {
 
-    @Value("${workers.address}")
-    private String workers;
+    @Value("${workers.key}")
+    private String workerKey;
 
     @Autowired
     TaskProgressService taskProgressService;
@@ -62,17 +65,30 @@ public class TaskController {
             if (!"tspider".equals(token)) {
                 return new BasicResponse<>(403, "forbidden");
             }
-            System.out.println(spiderConfig.getData());
-            taskBuilder.build(spiderConfig.getData(), workers).start();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < taskBuilder.getTask().getExtractRules().size(); i++) {
-                taskService.addTask(token, taskBuilder.getTask().getId());
-                sb.append(taskBuilder.getTask().getId()).append(",");
+            List<String> workers = new ArrayList<>();
+            try {
+                if (redisService.lock(workerKey)) {
+                    Set<String> tmp = redisService.slist(workerKey);
+                    workers.addAll(tmp);
+                    redisService.unlock(workerKey);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            return new BasicResponse<>(200, "success",
-                    sb.toString().substring(0, sb.toString().length() - 1));
+            if (workers.size() > 1) {
+                taskBuilder.build(spiderConfig.getData(), workers).start();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < taskBuilder.getTask().getExtractRules().size(); i++) {
+                    taskService.addTask(token, taskBuilder.getTask().getId());
+                    sb.append(taskBuilder.getTask().getId()).append(",");
+                }
+                return new BasicResponse<>(200, "success",
+                        sb.toString().substring(0, sb.toString().length() - 1));
+            } else {
+                return new BasicResponse<>(500, "error");
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
             return new BasicResponse<>(404, "error");
         }
     }

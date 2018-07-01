@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Create by xuantang
@@ -55,6 +56,14 @@ public class RedisService {
         }
     }
 
+    public void rpush(String key, String value) {
+        try {
+            redisTemplate.opsForList().rightPush(key, value);
+        } catch (Exception e) {
+            logger.error("get redis error, key : {}", key);
+        }
+    }
+
     public void lpushAll(String key, List<String> values) {
         try {
             redisTemplate.opsForList().leftPushAll(key, values);
@@ -83,6 +92,34 @@ public class RedisService {
         return respockets;
     }
 
+    public String spop(String key) {
+        Object obj = null;
+        try {
+            obj = redisTemplate.opsForSet().pop(key);
+        } catch (Exception e) {
+            logger.error("get redis error, key : {}", key);
+        }
+        return obj != null ? obj.toString() : null;
+    }
+
+    public Set<String> slist(String key) {
+        Set<String> obj = null;
+        try {
+            obj = redisTemplate.opsForSet().members(key);
+        } catch (Exception e) {
+            logger.error("get redis error, key : {}", key);
+        }
+        return obj;
+    }
+
+    public void sadd(String key, String... value) {
+        try {
+            redisTemplate.opsForSet().add(key, value);
+        } catch (Exception e) {
+            logger.error("get redis error, key : {}", key);
+        }
+    }
+
     public String lpop(String key) {
         Object obj = null;
         try {
@@ -92,6 +129,7 @@ public class RedisService {
         }
         return obj != null ? obj.toString() : null;
     }
+
 
     public Long lsize(String key) {
         Object obj = null;

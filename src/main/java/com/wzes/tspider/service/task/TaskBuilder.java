@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 @Component
 public class TaskBuilder {
 
-    private String[] hosts;
+    private List<String> hosts;
     private Result result;
     private Task task;
 
@@ -66,9 +66,9 @@ public class TaskBuilder {
         // clear the urls
         task.setUrls(null);
         //final CountDownLatch countDown = new CountDownLatch(numOfThreads);
-        for (int index = 0; index < hosts.length; index++) {
+        for (int index = 0; index < hosts.size(); index++) {
             // 创建线程
-            HttpThread httpThread = new HttpThread(hosts[index % hosts.length],
+            HttpThread httpThread = new HttpThread(hosts.get(index % hosts.size()),
                     JSON.toJSONString(task));
             httpThreads.add(httpThread);
             executorService.execute(httpThread);
@@ -82,15 +82,14 @@ public class TaskBuilder {
      * @param workers
      * @return
      */
-    public TaskBuilder build(String data, String workers) {
+    public TaskBuilder build(String data, List<String> workers) {
         // get id
         String id = IdUtils.getUUID();
         Task rTask = JSON.parseObject(data, Task.class);
         rTask.setId(id);
         List<String> urls = rTask.getUrls();
         UrlWarehouse.getInstance().setUrls(id, urls);
-
-        hosts = workers.split(",");
+        hosts = workers;
         task = rTask;
         return this;
     }
